@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        h1{
+            font-size: 40px;
+            text-align: center;
+            
+        }
+        
+        
+        table, tr,td{
+            color : rgb(0, 0, 0);
+            padding : 10px;
+            width: 150px;
+            margin-left: auto;
+            cursor: pointer;
+            font-weight: bold;
+            
+        }
+       
+
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        
+        <h1>음식 추첨기</h1>   
+       
+            
+       
+            <!-- <div>
+                <button @click = "fnLogout">로그아웃</button>   
+                <button @click = "fnAdd">글쓰기</button>
+            </div>         -->
+         
+        <table>
+        <thead>
+        <tr>
+            <td @click="fnView('전체')">전체</td>
+        </tr>
+        <tr>
+            <td @click="fnView('한식')">한식</td>
+        </tr>
+         <tr>
+            <td @click="fnView('양식')">양식</td>
+        </tr>
+         <tr>
+            <td @click="fnView('중식')">중식</td>
+        </tr>
+         <tr>
+            <td @click="fnView('일식')">일식</td>
+        </tr>
+         <tr>
+            <td @click="fnView('디저트')">디저트</td>
+        </tr>
+        <tr>
+            <td @click="fnView('음료')">음료</td>
+        </tr>
+    </thead>
+   
+       </table>
+
+    
+    
+</div>
+</div>
+</body>
+</html>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 변수 - (key : value)
+                    list : [] 
+                
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnList: function () {
+                let self = this;
+                
+                $.ajax({
+                    url: "http://localhost:3009/",
+                    dataType: "json",
+                    type: "GET",
+                    data: {},
+                    success: function (data) {
+                        console.log(data);
+                        self.list = data;
+                        
+                    }
+                });
+            },
+           fnView: function(foodTypeId) {
+            location.href = "food-list.html?foodTypeId=" +foodTypeId;
+}
+        }, // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
+            let self = this;
+            self.fnList();
+        }
+    });
+
+    app.mount('#app');
+</script>

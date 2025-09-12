@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .main-menu{
+            background-color: rgb(255, 255, 255);
+            color : rgb(0, 0, 0);
+            padding : 10px;
+            width: 150px;
+            box-sizing: border-box;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+        .sub-menu{
+            background-color: beige;
+            width: 150px;
+            box-shadow: 2px 2px 2px beige;
+            display : none;
+        }
+        .sub-menu a{
+            display : block;
+            padding : 10px;
+            cursor: pointer; /* 마우스를 위로 올리면 손모양으로 바뀜(클릭할 수 있는것 처럼) */
+        }
+        .top-menu:hover .sub-menu{
+            display: block;
+        }
+        .sub-menu a:hover{
+            background-color: rgb(222, 222, 151);
+        }
+        .top-menu{
+            display: block;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-menu">
+        <div class="main-menu">전체</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>
+    </div>
+    <div class="top-menu">
+        <div class="main-menu">한식</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>      
+        </div>
+         <div class="top-menu">
+        <div class="main-menu">양식</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>      
+        </div>
+         <div class="top-menu">
+        <div class="main-menu">중식</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>      
+        </div>
+         <div class="top-menu">
+        <div class="main-menu">일식</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>      
+        </div>
+         <div class="top-menu">
+        <div class="main-menu">디저트/음료</div>
+        <!-- <div class="sub-menu">
+            <a>Menu 1</a>
+            <a>Menu 2</a>
+            <a>Menu 3</a> -->
+        </div>      
+        </div>
+    </div>
+    
+</body>
+</html>
