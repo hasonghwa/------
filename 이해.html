@@ -18,7 +18,6 @@
             padding: 5px 20px;
             border-collapse: collapse;
         }
-        /* 25.09.15 여기서부터 해야됨 : insert 다시 live에서 데이터 수정이 안됨 */
     </style>
 </head>
 
@@ -27,36 +26,32 @@
         <div v-if="!editMode">
             <table>
                 <tr>
-                    <th>번호</th>
-                    <th>음식이름</th>
-                    <th>종류</th>
-                    <th>#</th>
-                    <th>추천</th>
-                    
+                    <th>학번</th>
+                    <th>이름</th>
+                    <th>학과</th>
+                    <th>학년</th>
+                    <th>키</th>
+                    <th>삭제</th>
+                    <th>수정</th>
                 </tr>
                 <tr v-for="item in list">
-                   
-                    <td>{{item.FOOD_TYPE_ID}}</td>
-                    <td>{{item.FOOD_TYPE_NAME}}</td>
-                    <td>{{item.DESCRIPTION}}</td>
-                    <td>{{item.RECOMMEND_MOOD}}</td>
-                    <td>{{item.RECOMMEND_DESCRIPTION}}</td>
-                    
-                    <td><button @click="fnRemove(item.FOOD_TYPE_ID)">삭제</button></td>
+                    <td>{{item.STU_NO}}</td>
+                    <td>{{item.STU_NAME}}</td>
+                    <td>{{item.STU_DEPT}}</td>
+                    <td>{{item.STU_GRADE}}</td>
+                    <td>{{item.STU_HEIGHT}}</td>
+                    <td><button @click="fnRemove(item.STU_NO)">삭제</button></td>
                     <td><button @click="fnEditMode(item)">수정</button></td>
                 </tr>
             </table>
             <div>
-                <button @click="fnAdd">음식종류 추가</button>
+                <button @click="fnAdd">학생추가</button>
             </div>
         </div>
         <div v-else>
-             <input type="hidden" v-model="foodNo">
-            <div>{{info.FOOD_TYPE_ID}}</div> <!--오답노트: server에서 foodNo를 안보냈기 때문에 수정이 안됬던것 -->
+            <div>학번 : {{info.STU_NO}}</div>
             <div>이름 : <input v-model="name"></div>
-            <div>종류 : <input v-model="descr"></div>
-            <div># : <input v-model="mood"></div>
-            <div>설명 : <input v-model= "reco"></div>
+            <div>학과 : <input v-model="dept"></div>
             <div>
                 <button @click="fnEdit">수정</button>
                 <button @click="editMode = false">취소</button>
@@ -76,20 +71,16 @@
                 list: [],
                 info: {},
                 editMode: false,
-                name : '',
-                descr : '',
-                mood : '',
-                reco : '',
-                foodNo : null,
-            
+                name : "",
+                dept : ""
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
-            fnFoodList: function () {
+            fnStuList: function () {
                 let self = this;
                 $.ajax({
-                    url: "http://localhost:3009/food/list",
+                    url: "http://localhost:3009/list",
                     dataType: "json",
                     type: "GET",
                     data: {},
@@ -99,21 +90,20 @@
                     }
                 });
             },
-            fnRemove: function (foodNumver) {
+            fnRemove: function (stuNumber) {
                 let self = this;
                 if (!confirm("정말 삭제하실?")) {
                     return;
                 }
 
                 $.ajax({
-                    url: "http://localhost:3009/food/delete",
+                    url: "http://localhost:3009/delete",
                     dataType: "json",
                     type: "GET",
-                    data: { foodId: foodNumver },
+                    data: { stuNo: stuNumber },
                     success: function (data) {
                         alert("삭제되었습니다!");
-                        console.log(data);
-                        self.fnFoodList();
+                        self.fnStuList();
                     }
                 });
 
@@ -124,21 +114,18 @@
                     return;
                 }
                 let param = {
+                    stuNo: self.info.STU_NO,
                     name: self.name,
-                    descr: self.descr,
-                    foodNo : self.info.FOOD_TYPE_ID,
-                    mood : self.mood,
-                    reco : self.reco
-
+                    dept: self.dept
                 };
                 $.ajax({
-                    url: "http://localhost:3009/food/update",
+                    url: "http://localhost:3009/update",
                     dataType: "json",
                     type: "GET",
                     data: param,
                     success: function (data) {
                         alert("수정되었습니다!");
-                        self.fnFoodList();
+                        self.fnStuList();
                         self.editMode = false;
                     }
                 });
@@ -147,20 +134,18 @@
                 let self = this;
                 console.log(map);
                 self.info = map;
-                self.name = map.FOOD_TYPE_NAME;
-                self.descr = map.DESCRIPTION;
-                self.mood = map.RECOMMEND_MOOD;
-                self.reco = map.RECOMMEND_DESCRIPTION;
+                self.name = map.STU_NAME;
+                self.dept = map.STU_DEPT;
                 self.editMode = true; // !self.editMode
             },
             fnAdd : function(){
-               location.href= "food-insert.html";
+                location.href="이해7_Vue_Insert.html";
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
-            self.fnFoodList();
+            self.fnStuList();
         }
     });
 

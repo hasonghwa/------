@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>음식추가</h2>
+        <div>
+            이름 : 
+            <template v-if="checkFlg">
+                <input v-model="name">
+            </template>
+            <template v-else>
+                <input v-model="name">
+            </template>
+            
+            <button @click="fnCheck">중복체크</button>
+        </div>
+       
+        <div>종류 : <input v-model="descr"></div>
+        
+        <div># : <input v-model="mood"></div>
+        
+        <div>추천 : <input v-model="reco"></div>
+        <div>
+            <button @click="fnAdd">추가</button>
+            <button @click="fnBack">되돌아가기</button>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 변수 - (key : value)
+                
+                name : "",
+                descr : "",
+                mood : "",
+                reco : "",
+                checkFlg : false
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnAdd: function () {
+                let self = this;
+                if(!self.checkFlg){
+                    alert("중복체크 확인 후 추가해주세요.");
+                    return;
+                }
+                
+
+                $.ajax({
+                    url: "http://localhost:3009/food/insert",
+                    dataType: "json",
+                    type: "GET",
+                    data: {
+                        name : self.name, 
+                        descr : self.descr,
+                        mood : self.mood,
+                        reco : self.reco
+                    },
+                    success: function (data) {
+                        alert("추가되었습니다.");
+                        self.fnBack();
+                    }
+                });
+            },
+            fnBack : function(){
+                location.href="food-list.html";
+            },
+
+
+
+
+            fnCheck : function(){
+                let self = this;
+                
+                $.ajax({
+                    url : "http://localhost:3009/food/search", 
+                    dataType : "json",
+                    type : "GET",
+                    data : {name : self.name},
+                    success : function(data){
+                        console.log(data);  
+                        if(data.length == 0){
+                            alert("중복아님.");
+                            self.checkFlg = true;
+                        } else {
+                            alert("이미 있음.");
+                        }
+                    }
+                });
+            }
+        
+        }, // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
+        }
+    });
+
+    app.mount('#app');
+</script>
