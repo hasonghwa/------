@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        h3{
+            text-align: center;
+            padding :150px;
+        }
+
+        click{
+            
+            cursor: pointer;
+            text-align: center;
+        }
+        .box{
+        background-color: rgb(30, 255, 0);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h3>click을 누르면 모든 음식메뉴가 무작위로 나옵니다</h3>
+        
+        <click>
+        <div class="box" @click="fnRandomList">click!</div>
+        </click>
+    </div>
+</body>
+</html>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 변수 - (key : value)
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnRandomList() {
+    let self = this;
+    $.ajax({
+        url: "http://localhost:3009/food/list",
+        dataType: "json",
+        type: "GET",
+        success(data) {
+            self.foodList = data;
+
+            // 1. 조건에 맞는 음식만 담을 빈 배열 만들기
+            let filteredFoods = [];
+
+            // 2. for문으로 배열 전체를 돌면서 조건 검사 (‘김치’ 포함 여부)
+            for (let i = 0; i < self.foodList.length; i++) {
+                let food = self.foodList[i];
+                if (food.indexOf("김치") !== -1) {
+                    filteredFoods.push(food);
+                }
+            }
+
+            // 3. 조건에 맞는 음식 중 랜덤으로 하나 고르기
+            if (filteredFoods.length > 0) {
+                let randomIndex = Math.floor(Math.random() * filteredFoods.length);
+                self.randomFood = filteredFoods[randomIndex];
+            } else {
+                self.randomFood = "조건에 맞는 음식이 없습니다.";
+            }
+        },
+        error() {
+            self.randomFood = "서버에서 데이터를 불러오지 못했습니다.";
+        }
+    });
+}
+        },
+ // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
+        }
+    });
+
+    app.mount('#app');
+</script>

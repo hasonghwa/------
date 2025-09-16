@@ -18,12 +18,30 @@
             padding: 5px 20px;
             border-collapse: collapse;
         }
-        
     </style>
 </head>
 
 <body>
     <div id="app">
+        <div>
+            <select v-model="foodCategory" @change="fnFoodList">
+                <option value="">전체</option>
+                <option value="10">한식</option>
+                <option value="20">양식</option>
+                <option value="30">중식</option>
+                <option value="40">일식</option>
+                <option value="50">디저트</option>
+                <option value="60">음료</option>
+                
+            </select>
+
+        </div>
+
+
+
+
+
+
         <div v-if="!editMode">
             <table>
                 <tr>
@@ -32,16 +50,16 @@
                     <th>종류</th>
                     <th>#</th>
                     <th>추천</th>
-                    
+
                 </tr>
                 <tr v-for="item in list">
-                   
+
                     <td>{{item.FOOD_TYPE_ID}}</td>
                     <td>{{item.FOOD_TYPE_NAME}}</td>
                     <td>{{item.DESCRIPTION}}</td>
                     <td>{{item.RECOMMEND_MOOD}}</td>
                     <td>{{item.RECOMMEND_DESCRIPTION}}</td>
-                    
+
                     <td><button @click="fnRemove(item.FOOD_TYPE_ID)">삭제</button></td>
                     <td><button @click="fnEditMode(item)">수정</button></td>
                 </tr>
@@ -51,12 +69,12 @@
             </div>
         </div>
         <div v-else>
-             <input type="hidden" v-model="foodNo">
+            <input type="hidden" v-model="foodNo">
             <div>{{info.FOOD_TYPE_ID}}</div> <!--오답노트: server에서 foodNo를 안보냈기 때문에 수정이 안됬던것 -->
             <div>이름 : <input v-model="name"></div>
             <div>종류 : <input v-model="descr"></div>
             <div># : <input v-model="mood"></div>
-            <div>설명 : <input v-model= "reco"></div>
+            <div>설명 : <input v-model="reco"></div>
             <div>
                 <button @click="fnEdit">수정</button>
                 <button @click="editMode = false">취소</button>
@@ -76,23 +94,26 @@
                 list: [],
                 info: {},
                 editMode: false,
-                name : '',
-                descr : '',
-                mood : '',
-                reco : '',
-                foodNo : null,
-            
+                name: '',
+                descr: '',
+                mood: '',
+                reco: '',
+                foodNo: "",
+                foodCategory: "",
+                FoodList: []
+
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnFoodList: function () {
                 let self = this;
+
                 $.ajax({
                     url: "http://localhost:3009/food/list",
                     dataType: "json",
                     type: "GET",
-                    data: {},
+                    data: { foodNo: self.foodNo, foodCategory : self.foodCategory },
                     success: function (data) {
                         console.log(data);
                         self.list = data.list;
@@ -126,9 +147,9 @@
                 let param = {
                     name: self.name,
                     descr: self.descr,
-                    foodNo : self.info.FOOD_TYPE_ID,
-                    mood : self.mood,
-                    reco : self.reco
+                    foodNo: self.info.FOOD_TYPE_ID,
+                    mood: self.mood,
+                    reco: self.reco
 
                 };
                 $.ajax({
@@ -143,7 +164,7 @@
                     }
                 });
             },
-            fnEditMode : function(map){
+            fnEditMode: function (map) {
                 let self = this;
                 console.log(map);
                 self.info = map;
@@ -153,8 +174,8 @@
                 self.reco = map.RECOMMEND_DESCRIPTION;
                 self.editMode = true; // !self.editMode
             },
-            fnAdd : function(){
-               location.href= "food-insert.html";
+            fnAdd: function () {
+                location.href = "food-insert.html";
             }
         }, // methods
         mounted() {

@@ -18,12 +18,30 @@
             color : rgb(0, 0, 0);
             padding : 10px;
             width: 150px;
-            margin-left: auto;
+            height: 150px;
             cursor: pointer;
             font-weight: bold;
+            text-align: center;
             
         }
+        start, random{
+        font-size: 80px;
+        text-align: center;
+       }
        
+       
+       
+        start :hover{
+        font-size: 100px;
+        text-align: center;
+        cursor: pointer;
+       }
+
+       random :hover{
+        font-size: 100px;
+        text-align: center;
+        cursor: pointer;
+       }
 
 
     </style>
@@ -31,39 +49,15 @@
 <body>
     <div id="app">
         
-        <h1>음식 추첨기</h1>   
+        <h1>음식 게시판</h1>   
        
-            
+        <start>
+       <div @click="fnView">포스트</div>
+       </start>
        
-        <!-- 한식이면 한식만 뜨고 양식이면 양식만 뜨게 만들고 싶음 (이거 걍 javascrip로 하면됨) -->
-         <!-- 랜덤으로 나오게도 하고 싶음(고민해보기)  -->
-        <table>
-        <thead>
-        <tr>
-            <td @click="fnView('전체')">전체</td>
-        </tr>
-        <tr>
-            <td @click="fnView('한식')">한식</td>
-        </tr>
-         <tr>
-            <td @click="fnView('양식')">양식</td>
-        </tr>
-         <tr>
-            <td @click="fnView('중식')">중식</td>
-        </tr>
-         <tr>
-            <td @click="fnView('일식')">일식</td>
-        </tr>
-         <tr>
-            <td @click="fnView('디저트')">디저트</td>
-        </tr>
-        <tr>
-            <td @click="fnView('음료')">음료</td>
-        </tr>
-    </thead>
-   
-       </table>
-
+       <random>
+        <div @click="fnRandom">랜덤뽑기</div>
+       </random>
     
     
 </div>
@@ -99,7 +93,11 @@
             },
            fnView: function(foodTypeId) {
             location.href = "food-list.html?foodTypeId=" +foodTypeId;
-}
+                },
+            fnRandom : function(random){
+                location.href = "food-random.html?random=" +random;
+            }
+            
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
