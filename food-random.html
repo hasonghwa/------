@@ -1,86 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        h3{
-            text-align: center;
-            padding :150px;
-        }
 
-        click{
-            
-            cursor: pointer;
-            text-align: center;
-        }
-        .box{
-        background-color: rgb(30, 255, 0);
-        }
-    </style>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>랜덤 음식 선택기</title>
+
+  <!-- jQuery & Vue -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    h3 {
+      text-align: center;
+      padding: 50px;
+    }
+
+    .box {
+      background-color: rgb(30, 255, 0);
+      cursor: pointer;
+      text-align: center;
+      padding: 20px;
+      margin: 0 auto;
+      width: 100px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 80%;
+      margin: 30px auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
-    <div id="app">
-        <h3>click을 누르면 모든 음식메뉴가 무작위로 나옵니다</h3>
-        
-        <click>
-        <div class="box" @click="fnRandomList">click!</div>
-        </click>
+  <div id="app">
+    <h3>Click을 누르면 무작위 음식 메뉴가 나옵니다</h3>
+
+    <div id="click">
+      <div class="box" @click="fnRandom">click!</div>
     </div>
+
+    <table v-if="list.length > 0">
+      <thead>
+        <tr>
+          <!-- <th>번호</th> -->
+          <th>이름</th>
+          <th>종류</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in list" :key="item.FOOD_TYPE_ID">
+          <!-- <div><td>{{ item.FOOD_TYPE_ID }}</td></div> -->
+          <td>{{ item.FOOD_TYPE_NAME }}</td>
+          <td>{{ item.DESCRIPTION }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
+
 </html>
 
 <script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                // 변수 - (key : value)
-            };
-        },
-        methods: {
-            // 함수(메소드) - (key : function())
-            fnRandomList() {
-    let self = this;
-    $.ajax({
-        url: "http://localhost:3009/food/list",
-        dataType: "json",
-        type: "GET",
-        success(data) {
-            self.foodList = data;
+  const app = Vue.createApp({
+    data() {
+      return {
+        list: [] // 서버에서 받아올 음식 정보 리스트
+      };
+    },
+    methods: {
+      fnRandom() {
+        let self = this;
+        $.ajax({
+          url: "http://localhost:3009/food/random",
+          type: "GET",
+          dataType: "json",
+          success(data) {
+            // 서버에서 배열로 받아온다고 가정
+            self.list = data;
+          },
+          error(err) {
+            console.error("랜덤 음식 가져오기 실패:", err);
+            alert("서버와의 통신에 실패했습니다.");
+          }
+        });
+      }
+    },
+    mounted() {
+      // 처음 들어왔을 때 1번 실행
+      this.fnRandom();
+    }
+  });
 
-            // 1. 조건에 맞는 음식만 담을 빈 배열 만들기
-            let filteredFoods = [];
-
-            // 2. for문으로 배열 전체를 돌면서 조건 검사 (‘김치’ 포함 여부)
-            for (let i = 0; i < self.foodList.length; i++) {
-                let food = self.foodList[i];
-                if (food.indexOf("김치") !== -1) {
-                    filteredFoods.push(food);
-                }
-            }
-
-            // 3. 조건에 맞는 음식 중 랜덤으로 하나 고르기
-            if (filteredFoods.length > 0) {
-                let randomIndex = Math.floor(Math.random() * filteredFoods.length);
-                self.randomFood = filteredFoods[randomIndex];
-            } else {
-                self.randomFood = "조건에 맞는 음식이 없습니다.";
-            }
-        },
-        error() {
-            self.randomFood = "서버에서 데이터를 불러오지 못했습니다.";
-        }
-    });
-}
-        },
- // methods
-        mounted() {
-            // 처음 시작할 때 실행되는 부분
-        }
-    });
-
-    app.mount('#app');
+  app.mount('#app');
 </script>
