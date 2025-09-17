@@ -99,15 +99,17 @@
   </style>
 </head>
 
+<!-- 중간 생략 → 스타일은 이전과 동일 -->
+
 <body>
   <div id="app">
     <h3>Click을 누르면 무작위 음식 메뉴가 나옵니다</h3>
 
-    <div id="click">
-      <div class="box" @click="fnRandom">Click!</div>
-    </div>
+    <!-- ✅ 버튼은 항상 보임 -->
+    <div class="box" @click="showList">Click!</div>
 
-    <table v-if="list.length > 0" aria-label="랜덤 음식 목록">
+    <!-- ✅ 리스트는 flg가 true일 때만 보임 -->
+    <table v-if="flg && list.length > 0" aria-label="랜덤 음식 목록">
       <thead>
         <tr>
           <th>이름</th>
@@ -122,7 +124,8 @@
       </tbody>
     </table>
 
-    <p v-else style="color: #666; margin-top: 20px; font-style: italic;">
+    <!-- 리스트 비어있을 때 메시지 -->
+    <p v-if="flg && list.length === 0" style="color: #666; margin-top: 20px; font-style: italic;">
       표시할 음식이 없습니다.
     </p>
   </div>
@@ -131,10 +134,15 @@
     const app = Vue.createApp({
       data() {
         return {
-          list: [] // 서버에서 받아올 음식 정보 리스트
+          list: [],   // 음식 리스트
+          flg: false  // 리스트 보일지 여부
         };
       },
       methods: {
+        showList() {
+          this.flg = true;     // 한 번이라도 클릭하면 리스트 표시
+          this.fnRandom();     // 매번 새로 불러오기
+        },
         fnRandom() {
           let self = this;
           $.ajax({
@@ -142,7 +150,6 @@
             type: "GET",
             dataType: "json",
             success(data) {
-              // 서버에서 배열로 받아온다고 가정
               self.list = data;
             },
             error(err) {
@@ -151,15 +158,12 @@
             }
           });
         }
-      },
-      mounted() {
-        // 페이지 로드 시 자동 실행
-        this.fnRandom();
       }
     });
 
     app.mount('#app');
   </script>
 </body>
+
 
 </html>
