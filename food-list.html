@@ -2,188 +2,355 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        table,
-        tr,
-        th,
-        td {
-            border: 1px solid black;
-            text-align: center;
-            padding: 5px 20px;
-            border-collapse: collapse;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>음식 목록 관리</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    /* 전체 배경과 폰트 */
+    body {
+      background: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    #app {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      width: 900px;
+      max-width: 100%;
+    }
+
+    /* 셀렉트 박스 */
+    select {
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 25px;
+      transition: border-color 0.3s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 6px #667eea66;
+    }
+
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    th {
+      background-color: #667eea;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr:hover {
+      background-color: #f5f7ff;
+    }
+
+    /* 버튼 공통 */
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      margin: 0 5px;
+    }
+
+    button:hover {
+      box-shadow: 0 6px 14px rgba(102, 126, 234, 0.5);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:nth-child(odd) {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    button:nth-child(even) {
+      background-color: #3498db;
+      color: white;
+    }
+
+    /* 수정폼 스타일 */
+    [v-cloak] {
+      display: none;
+    }
+
+    input[type="text"],
+    input[type="hidden"] {
+      padding: 8px 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 6px #667eea66;
+    }
+
+    /* 수정폼 레이아웃 */
+    .edit-container > div {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .edit-container label {
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .edit-buttons {
+      margin-top: 20px;
+    }
+
+    .edit-buttons button {
+      margin-right: 12px;
+      width: 90px;
+    }
+
+    /* 추가 버튼 */
+    .add-btn {
+      margin-top: 20px;
+      background-color: #43a047;
+      color: white;
+      padding: 12px 28px;
+      font-size: 16px;
+      border-radius: 10px;
+      box-shadow: 0 6px 14px rgba(67, 160, 71, 0.5);
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .add-btn:hover {
+      background-color: #388e3c;
+      box-shadow: 0 8px 20px rgba(56, 142, 60, 0.6);
+    }
+  </style>
 </head>
 
 <body>
-    <div id="app">
-        <div>
-            <select v-model="foodCategory" @change="fnFoodList">
-                <option value="">전체</option>
-                <option value="10">한식</option>
-                <option value="20">양식</option>
-                <option value="30">중식</option>
-                <option value="40">일식</option>
-                <option value="50">디저트</option>
-                <option value="60">음료</option>
-                
-            </select>
-
-        </div>
-
-
-
-
-
-
-        <div v-if="!editMode">
-            <table>
-                <tr>
-                    <th>번호</th>
-                    <th>음식이름</th>
-                    <th>종류</th>
-                    <th>#</th>
-                    <th>추천</th>
-
-                </tr>
-                <tr v-for="item in list">
-
-                    <td>{{item.FOOD_TYPE_ID}}</td>
-                    <td>{{item.FOOD_TYPE_NAME}}</td>
-                    <td>{{item.DESCRIPTION}}</td>
-                    <td>{{item.RECOMMEND_MOOD}}</td>
-                    <td>{{item.RECOMMEND_DESCRIPTION}}</td>
-
-                    <td><button @click="fnRemove(item.FOOD_TYPE_ID)">삭제</button></td>
-                    <td><button @click="fnEditMode(item)">수정</button></td>
-                </tr>
-            </table>
-            <div>
-                <button @click="fnAdd">음식종류 추가</button>
-            </div>
-        </div>
-        <div v-else>
-            <input type="hidden" v-model="foodNo">
-            <div>{{info.FOOD_TYPE_ID}}</div> <!--오답노트: server에서 foodNo를 안보냈기 때문에 수정이 안됬던것 -->
-            <div>이름 : <input v-model="name"></div>
-            <div>종류 : <input v-model="descr"></div>
-            <div># : <input v-model="mood"></div>
-            <div>설명 : <input v-model="reco"></div>
-            <div>
-                <button @click="fnEdit">수정</button>
-                <button @click="editMode = false">취소</button>
-            </div>
-        </div>
-
+  <div id="app" v-cloak>
+    <div>
+      <select v-model="foodCategory" @change="fnFoodList">
+        <option value="">전체</option>
+        <option value="10">한식</option>
+        <option value="20">양식</option>
+        <option value="30">중식</option>
+        <option value="40">일식</option>
+        <option value="50">디저트</option>
+        <option value="60">음료</option>
+      </select>
     </div>
+
+    <div v-if="!editMode">
+      <table>
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>음식이름</th>
+            <th>종류</th>
+            <th>#</th>
+            <th>추천</th>
+            <th colspan="2">관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in list" :key="item.FOOD_TYPE_ID">
+            <td>{{ item.FOOD_TYPE_ID }}</td>
+            <td>{{ item.FOOD_TYPE_NAME }}</td>
+            <td>{{ item.DESCRIPTION }}</td>
+            <td>{{ item.RECOMMEND_MOOD }}</td>
+            <td>{{ item.RECOMMEND_DESCRIPTION }}</td>
+            <td><button @click="fnRemove(item.FOOD_TYPE_ID)">삭제</button></td>
+            <td><button @click="fnEditMode(item)">수정</button></td>
+          </tr>
+          <tr v-if="list.length === 0">
+            <td colspan="7" style="padding: 20px; font-style: italic; color: #666;">
+              선택된 카테고리에 데이터가 없습니다.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <button class="add-btn" @click="fnAdd">음식종류 추가</button>
+      </div>
+    </div>
+
+    <div v-else class="edit-container">
+      <input type="hidden" v-model="foodNo" />
+      <div>번호: <strong>{{ info.FOOD_TYPE_ID }}</strong></div>
+      <div>
+        <label for="name">이름:</label>
+        <input id="name" type="text" v-model="name" />
+      </div>
+      <div>
+        <label for="descr">종류:</label>
+        <input id="descr" type="text" v-model="descr" />
+      </div>
+      <div>
+        <label for="mood">#:</label>
+        <input id="mood" type="text" v-model="mood" />
+      </div>
+      <div>
+        <label for="reco">설명:</label>
+        <input id="reco" type="text" v-model="reco" />
+      </div>
+      <div class="edit-buttons">
+        <button @click="fnEdit">수정</button>
+        <button @click="editMode = false" style="background-color:#999; color:#fff;">취소</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
 
 <script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                // 변수 - (key : value)
-                list: [],
-                info: {},
-                editMode: false,
-                name: '',
-                descr: '',
-                mood: '',
-                reco: '',
-                foodNo: "",
-                foodCategory: "",
-                FoodList: []
-
-            };
-        },
-        methods: {
-            // 함수(메소드) - (key : function())
-            fnFoodList: function () {
-                let self = this;
-
-                $.ajax({
-                    url: "http://localhost:3009/food/list",
-                    dataType: "json",
-                    type: "GET",
-                    data: { foodNo: self.foodNo, foodCategory : self.foodCategory },
-                    success: function (data) {
-                        console.log(data);
-                        self.list = data.list;
-                    }
-                });
-            },
-            fnRemove: function (foodNumver) {
-                let self = this;
-                if (!confirm("정말 삭제하실?")) {
-                    return;
-                }
-
-                $.ajax({
-                    url: "http://localhost:3009/food/delete",
-                    dataType: "json",
-                    type: "GET",
-                    data: { foodId: foodNumver },
-                    success: function (data) {
-                        alert("삭제되었습니다!");
-                        console.log(data);
-                        self.fnFoodList();
-                    }
-                });
-
-            },
-            fnEdit: function () {
-                let self = this;
-                if (!confirm("정말 수정하실?")) {
-                    return;
-                }
-                let param = {
-                    name: self.name,
-                    descr: self.descr,
-                    foodNo: self.info.FOOD_TYPE_ID,
-                    mood: self.mood,
-                    reco: self.reco
-
-                };
-                $.ajax({
-                    url: "http://localhost:3009/food/update",
-                    dataType: "json",
-                    type: "GET",
-                    data: param,
-                    success: function (data) {
-                        alert("수정되었습니다!");
-                        self.fnFoodList();
-                        self.editMode = false;
-                    }
-                });
-            },
-            fnEditMode: function (map) {
-                let self = this;
-                console.log(map);
-                self.info = map;
-                self.name = map.FOOD_TYPE_NAME;
-                self.descr = map.DESCRIPTION;
-                self.mood = map.RECOMMEND_MOOD;
-                self.reco = map.RECOMMEND_DESCRIPTION;
-                self.editMode = true; // !self.editMode
-            },
-            fnAdd: function () {
-                location.href = "food-insert.html";
-            }
-        }, // methods
-        mounted() {
-            // 처음 시작할 때 실행되는 부분
-            let self = this;
-            self.fnFoodList();
+  const app = Vue.createApp({
+    data() {
+      return {
+        list: [],
+        info: {},
+        editMode: false,
+        name: '',
+        descr: '',
+        mood: '',
+        reco: '',
+        foodNo: "",
+        foodCategory: "",
+        FoodList: []
+      };
+    },
+    methods: {
+      fnFoodList() {
+        let self = this;
+        $.ajax({
+          url: "http://localhost:3009/food/list",
+          dataType: "json",
+          type: "GET",
+          data: {
+            foodNo: self.foodNo,
+            foodCategory: self.foodCategory
+          },
+          success(data) {
+            console.log(data);
+            self.list = data.list;
+          },
+          error(err) {
+            console.error("데이터 로드 실패", err);
+          }
+        });
+      },
+      fnRemove(foodNumber) {
+        let self = this;
+        if (!confirm("정말 삭제하시겠습니까?")) {
+          return;
         }
-    });
+        $.ajax({
+          url: "http://localhost:3009/food/delete",
+          dataType: "json",
+          type: "GET",
+          data: {
+            foodId: foodNumber
+          },
+          success(data) {
+            alert("삭제되었습니다!");
+            self.fnFoodList();
+          },
+          error(err) {
+            alert("삭제 실패");
+            console.error(err);
+          }
+        });
+      },
+      fnEdit() {
+        let self = this;
+        if (!confirm("정말 수정하시겠습니까?")) {
+          return;
+        }
+        let param = {
+          name: self.name,
+          descr: self.descr,
+          foodNo: self.info.FOOD_TYPE_ID,
+          mood: self.mood,
+          reco: self.reco
+        };
+        $.ajax({
+          url: "http://localhost:3009/food/update",
+          dataType: "json",
+          type: "GET",
+          data: param,
+          success(data) {
+            alert("수정되었습니다!");
+            self.fnFoodList();
+            self.editMode = false;
+          },
+          error(err) {
+            alert("수정 실패");
+            console.error(err);
+          }
+        });
+      },
+      fnEditMode(map) {
+        let self = this;
+        console.log(map);
+        self.info = map;
+        self.name = map.FOOD_TYPE_NAME;
+        self.descr = map.DESCRIPTION;
+        self.mood = map.RECOMMEND_MOOD;
+        self.reco = map.RECOMMEND_DESCRIPTION;
+        self.editMode = true;
+      },
+      fnAdd() {
+        location.href = "food-insert.html";
+      }
+    },
+    mounted() {
+      this.fnFoodList();
+    }
+  });
 
-    app.mount('#app');
+  app.mount('#app');
 </script>

@@ -1,110 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        h1{
-            font-size: 40px;
-            text-align: center;
-            
-        }
-        
-        
-        table, tr,td{
-            color : rgb(0, 0, 0);
-            padding : 10px;
-            width: 150px;
-            height: 150px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-            
-        }
-        start, random{
-        font-size: 80px;
-        text-align: center;
-       }
-       
-       
-       
-        start :hover{
-        font-size: 100px;
-        text-align: center;
-        cursor: pointer;
-       }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>음식 게시판</title>
 
-       random :hover{
-        font-size: 100px;
-        text-align: center;
-        cursor: pointer;
-       }
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+  <style>
+    /* 배경과 폰트 */
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
 
-    </style>
+    /* 앱 박스 */
+    #app {
+      background: white;
+      padding: 40px 60px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      width: 360px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    /* 버튼 공통 스타일 */
+    .btn {
+      display: inline-block;
+      width: 140px;
+      height: 140px;
+      line-height: 140px;
+      margin: 15px 10px;
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      background: #667eea;
+      border-radius: 16px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #556cd6;
+      transform: scale(1.1);
+      box-shadow: 0 10px 22px rgba(85, 108, 214, 0.6);
+    }
+
+    .btn:active {
+      background-color: #455bb5;
+      transform: scale(1);
+      box-shadow: 0 4px 12px rgba(69, 91, 181, 0.5);
+    }
+  </style>
 </head>
-<body>
-    <div id="app">
-        
-        <h1>음식 게시판</h1>   
-       
-        <start>
-       <div @click="fnView">포스트</div>
-       </start>
-       
-       <random>
-        <div @click="fnRandom">랜덤뽑기</div>
-       </random>
-    
-    
-</div>
-</div>
-</body>
-</html>
 
-<script>
+<body>
+  <div id="app">
+    <h1>음식 게시판</h1>
+
+    <!-- 의미 없는 태그 대신 class btn인 div 사용 -->
+    <div class="btn" @click="fnView(1)">포스트</div>
+    <div class="btn" @click="fnRandom('random')">랜덤뽑기</div>
+  </div>
+
+  <script>
     const app = Vue.createApp({
-        data() {
-            return {
-                // 변수 - (key : value)
-                    list : [] 
-                
-            };
-        },
-        methods: {
-            // 함수(메소드) - (key : function())
-            fnList: function () {
-                let self = this;
-                
-                $.ajax({
-                    url: "http://localhost:3009/",
-                    dataType: "json",
-                    type: "GET",
-                    data: {},
-                    success: function (data) {
-                        console.log(data);
-                        self.list = data;
-                        
-                    }
-                });
+      data() {
+        return {
+          list: []
+        };
+      },
+      methods: {
+        fnList() {
+          let self = this;
+          $.ajax({
+            url: "http://localhost:3009/",
+            dataType: "json",
+            type: "GET",
+            success(data) {
+              console.log(data);
+              self.list = data;
             },
-           fnView: function(foodTypeId) {
-            location.href = "food-list.html?foodTypeId=" +foodTypeId;
-                },
-            fnRandom : function(random){
-                location.href = "food-random.html?random=" +random;
+            error(err) {
+              console.error("데이터 로드 실패", err);
             }
-            
-        }, // methods
-        mounted() {
-            // 처음 시작할 때 실행되는 부분
-            let self = this;
-            self.fnList();
+          });
+        },
+        fnView(foodTypeId) {
+          location.href = "food-list.html?foodTypeId=" + foodTypeId;
+        },
+        fnRandom(random) {
+          location.href = "food-random.html?random=" + random;
         }
+      },
+      mounted() {
+        this.fnList();
+      }
     });
 
-    app.mount('#app');
-</script>
+    app.mount("#app");
+  </script>
+</body>
+
+</html>
