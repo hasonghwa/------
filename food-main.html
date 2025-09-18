@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8" />
@@ -11,9 +11,9 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <style>
-    /* 배경과 폰트 */
+    /* 🍊 전체 배경 */
     body {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #ffb347, #ffe259);
       margin: 0;
       min-height: 100vh;
       display: flex;
@@ -23,59 +23,67 @@
       color: #333;
     }
 
-    /* 앱 박스 */
+    /* 카드 스타일 */
     #app {
       background: white;
       padding: 40px 60px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      width: 360px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      width: 380px;
       text-align: center;
+      border: 3px solid #fff3cd;
     }
 
     h1 {
-      font-size: 36px;
-      margin-bottom: 40px;
-      color: #333;
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #f57c00;
     }
 
-    /* 버튼 공통 스타일 */
+    h3 {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #666;
+    }
+
+    /* 🍊 버튼 스타일 */
     .btn {
       display: inline-block;
       width: 140px;
       height: 140px;
       line-height: 140px;
       margin: 15px 10px;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: white;
-      background: #667eea;
+      background: #ff7043;
       border-radius: 16px;
       cursor: pointer;
       user-select: none;
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 16px rgba(255, 112, 67, 0.4);
       transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     }
 
     .btn:hover {
-      background-color: #556cd6;
+      background-color: #f4511e;
       transform: scale(1.1);
-      box-shadow: 0 10px 22px rgba(85, 108, 214, 0.6);
+      box-shadow: 0 10px 24px rgba(244, 81, 30, 0.5);
     }
 
     .btn:active {
-      background-color: #455bb5;
-      transform: scale(1);
-      box-shadow: 0 4px 12px rgba(69, 91, 181, 0.5);
+      background-color: #e64a19;
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(230, 74, 25, 0.4);
     }
   </style>
 </head>
 
 <body>
   <div id="app">
-    <h1>음식 게시판</h1>
+    <h1>🥘 음식 게시판</h1>
     <h3>사용할 아이콘을 선택해 주세요</h3>
-    <!-- 의미 없는 태그 대신 class btn인 div 사용 -->
+    
+    <!-- 버튼 영역 -->
     <div class="btn" @click="fnView(1)">포스트</div>
     <div class="btn" @click="fnRandom('random')">랜덤뽑기</div>
   </div>
@@ -95,7 +103,6 @@
             dataType: "json",
             type: "GET",
             success(data) {
-              console.log(data);
               self.list = data;
             },
             error(err) {

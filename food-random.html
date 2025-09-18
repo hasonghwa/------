@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8" />
@@ -13,49 +13,50 @@
 
   <style>
     body {
-      background-color: #f9fafb;
+      background: linear-gradient(135deg, #ffb347, #ffe259);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 40px 20px;
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      color: #222;
+      color: #333;
     }
 
     #app {
       width: 480px;
       background: white;
       padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
       text-align: center;
+      border: 3px solid #fff3cd;
     }
 
     h3 {
       font-weight: 700;
-      font-size: 1.6rem;
-      margin-bottom: 40px;
-      color: #444;
+      font-size: 1.5rem;
+      margin-bottom: 35px;
+      color: #f57c00;
     }
 
     .box {
-      background-color: #b700ff;
+      background-color: #ff7043;
       color: white;
       font-weight: 700;
       font-size: 1.2rem;
-      padding: 18px 0;
-      width: 160px;
-      margin: 0 auto 40px;
+      padding: 16px 0;
+      width: 180px;
+      margin: 0 auto 35px;
       border-radius: 12px;
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.3s ease, transform 0.15s ease;
-      box-shadow: 0 6px 12px rgba(117, 57, 255, 0.4);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 6px 12px rgba(255, 112, 67, 0.4);
     }
 
     .box:hover {
-      background-color: #b700ff;
+      background-color: #f4511e;
       transform: scale(1.05);
     }
 
@@ -71,18 +72,18 @@
       color: #333;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgb(0 0 0 / 0.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 
     th,
     td {
-      border: 1px solid #ddd;
+      border: 1px solid #f4f4f4;
       padding: 14px 12px;
       text-align: center;
     }
 
     th {
-      background-color: #bf50ff;
+      background-color: #ff9800;
       color: white;
       font-weight: 600;
       text-transform: uppercase;
@@ -90,25 +91,29 @@
     }
 
     tbody tr:nth-child(odd) {
-      background-color: #f7fdfa;
+      background-color: #fffef6;
     }
 
     tbody tr:hover {
-      background-color: #e2f0d9;
+      background-color: #fff3cd;
+    }
+
+    p {
+      color: #666;
+      margin-top: 20px;
+      font-style: italic;
     }
   </style>
 </head>
 
-<!-- 중간 생략 → 스타일은 이전과 동일 -->
-
 <body>
   <div id="app">
-    <h3>Click을 누르면 무작위 음식 메뉴가 나옵니다</h3>
+    <h3>🍽️ Click을 누르면 무작위 음식 메뉴가 나옵니다</h3>
 
-    <!-- ✅ 버튼은 항상 보임 -->
+    <!-- 버튼 -->
     <div class="box" @click="showList">Click!</div>
 
-    <!-- ✅ 리스트는 flg가 true일 때만 보임 -->
+    <!-- 테이블 -->
     <table v-if="flg && list.length > 0" aria-label="랜덤 음식 목록">
       <thead>
         <tr>
@@ -124,24 +129,22 @@
       </tbody>
     </table>
 
-    <!-- 리스트 비어있을 때 메시지 -->
-    <p v-if="flg && list.length === 0" style="color: #666; margin-top: 20px; font-style: italic;">
-      표시할 음식이 없습니다.
-    </p>
+    <!-- 리스트 없을 때 -->
+    <p v-if="flg && list.length === 0">표시할 음식이 없습니다.</p>
   </div>
 
   <script>
     const app = Vue.createApp({
       data() {
         return {
-          list: [],   // 음식 리스트
-          flg: false  // 리스트 보일지 여부
+          list: [],
+          flg: false
         };
       },
       methods: {
         showList() {
-          this.flg = true;     // 한 번이라도 클릭하면 리스트 표시
-          this.fnRandom();     // 매번 새로 불러오기
+          this.flg = true;
+          this.fnRandom();
         },
         fnRandom() {
           let self = this;
@@ -150,7 +153,6 @@
             type: "GET",
             dataType: "json",
             success(data) {
-              
               self.list = data;
             },
             error(err) {
@@ -165,6 +167,5 @@
     app.mount('#app');
   </script>
 </body>
-
 
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8" />
@@ -9,9 +9,9 @@
     integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
-    /* 전체 배경과 폰트 */
+    /* 🍊 전체 배경과 폰트 */
     body {
-      background: #f0f4f8;
+      background: linear-gradient(135deg, #ffb347, #ffe259);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 40px 20px;
@@ -24,47 +24,48 @@
     #app {
       background: white;
       padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
       width: 900px;
       max-width: 100%;
+      border: 3px solid #fff3cd;
     }
 
-    /* 셀렉트 박스 */
+    /* 셀렉트 박스 스타일 개선 */
     select {
       padding: 8px 12px;
       font-size: 16px;
       border-radius: 6px;
-      border: 1px solid #ccc;
+      border: 1px solid #ffa726;
       margin-bottom: 25px;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     select:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 6px #667eea66;
+      border-color: #f57c00;
+      box-shadow: 0 0 6px rgba(245, 124, 0, 0.4);
     }
 
     /* 테이블 스타일 */
     table {
       width: 100%;
       border-collapse: collapse;
-      box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
-      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
       overflow: hidden;
     }
 
     th,
     td {
       padding: 14px 20px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #f0e6cc;
       text-align: center;
       font-size: 15px;
     }
 
     th {
-      background-color: #667eea;
+      background-color: #ffa726;
       color: white;
       font-weight: 600;
       text-transform: uppercase;
@@ -72,10 +73,10 @@
     }
 
     tr:hover {
-      background-color: #f5f7ff;
+      background-color: #fff8e1;
     }
 
-    /* 버튼 공통 */
+    /* 버튼 공통 스타일 */
     button {
       padding: 8px 16px;
       border-radius: 8px;
@@ -83,27 +84,21 @@
       cursor: pointer;
       font-weight: 600;
       font-size: 14px;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
       user-select: none;
       margin: 0 5px;
+      background-color: #ff7043;
+      color: white;
     }
 
     button:hover {
-      box-shadow: 0 6px 14px rgba(102, 126, 234, 0.5);
+      background-color: #f4511e;
+      box-shadow: 0 6px 14px rgba(244, 81, 30, 0.5);
+      transform: translateY(-1px);
     }
 
     button:active {
-      transform: translateY(1px);
-    }
-
-    button:nth-child(odd) {
-      background-color: #e74c3c;
-      color: white;
-    }
-
-    button:nth-child(even) {
-      background-color: #3498db;
-      color: white;
+      transform: translateY(0);
     }
 
     /* 수정폼 스타일 */
@@ -121,13 +116,13 @@
       max-width: 300px;
       margin-bottom: 15px;
       box-sizing: border-box;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     input[type="text"]:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 6px #667eea66;
+      border-color: #ffb300;
+      box-shadow: 0 0 6px rgba(255, 179, 0, 0.4);
     }
 
     /* 수정폼 레이아웃 */
@@ -139,6 +134,7 @@
     .edit-container label {
       font-weight: 600;
       margin-right: 10px;
+      color: #555;
     }
 
     .edit-buttons {
@@ -153,19 +149,19 @@
     /* 추가 버튼 */
     .add-btn {
       margin-top: 20px;
-      background-color: #43a047;
+      background-color: #ffa726;
       color: white;
       padding: 12px 28px;
       font-size: 16px;
       border-radius: 10px;
-      box-shadow: 0 6px 14px rgba(67, 160, 71, 0.5);
+      box-shadow: 0 6px 14px rgba(255, 167, 38, 0.5);
       user-select: none;
       transition: background-color 0.3s ease;
     }
 
     .add-btn:hover {
-      background-color: #388e3c;
-      box-shadow: 0 8px 20px rgba(56, 142, 60, 0.6);
+      background-color: #f57c00;
+      box-shadow: 0 8px 20px rgba(245, 124, 0, 0.6);
     }
   </style>
 </head>
@@ -174,13 +170,13 @@
   <div id="app" v-cloak>
     <div>
       <select v-model="foodCategory" @change="fnFoodList">
-        <option value="">전체</option>
-        <option value="10">한식</option>
-        <option value="20">양식</option>
-        <option value="30">중식</option>
-        <option value="40">일식</option>
-        <option value="50">디저트</option>
-        <option value="60">음료</option>
+        <option :value="''">전체</option>
+        <option :value="10">한식</option>
+        <option :value="20">양식</option>
+        <option :value="30">중식</option>
+        <option :value="40">일식</option>
+        <option :value="50">디저트</option>
+        <option :value="60">음료</option>
       </select>
     </div>
 
@@ -189,7 +185,7 @@
         <thead>
           <tr>
             <th>번호</th>
-            <th>음식이름</th>
+            <th>음식 이름</th>
             <th>종류</th>
             <th>#</th>
             <th>추천</th>
@@ -200,9 +196,10 @@
           <tr v-for="item in list" :key="item.FOOD_TYPE_ID">
             <td>{{ item.FOOD_TYPE_ID }}</td>
             <td>{{ item.FOOD_TYPE_NAME }}</td>
-            <td>{{ item.DESCRIPTION }}</td>
+            <!-- 종류 텍스트 표시 -->
+            <td>{{ mapCategory(item.DESCRIPTION) }}</td>
             <td>{{ item.RECOMMEND_MOOD }}</td>
-            <td>{{ item.RECOMMEND_DESCRIPTION }}</td>
+            <td>{{ mapCategory(item.RECOMMEND_DESCRIPTION) }}</td>
             <td><button @click="fnRemove(item.FOOD_TYPE_ID)">삭제</button></td>
             <td><button @click="fnEditMode(item)">수정</button></td>
           </tr>
@@ -214,7 +211,7 @@
         </tbody>
       </table>
       <div>
-        <button class="add-btn" @click="fnAdd" value="plus ">음식종류 추가</button>
+        <button class="add-btn" @click="fnAdd">음식 종류 추가</button>
       </div>
     </div>
 
@@ -226,7 +223,7 @@
         <input id="name" type="text" v-model="name" />
       </div>
       <div>
-        <label for="descr">종류:</label>
+        <label for="descr">종류 코드:</label>
         <input id="descr" type="text" v-model="descr" />
       </div>
       <div>
@@ -234,7 +231,7 @@
         <input id="mood" type="text" v-model="mood" />
       </div>
       <div>
-        <label for="reco">설명:</label>
+        <label for="reco">추천 설명:</label>
         <input id="reco" type="text" v-model="reco" />
       </div>
       <div class="edit-buttons">
@@ -243,9 +240,6 @@
       </div>
     </div>
   </div>
-</body>
-
-</html>
 
 <script>
   const app = Vue.createApp({
@@ -264,6 +258,18 @@
       };
     },
     methods: {
+      mapCategory(value) {
+        const map = {
+          10: "한식",
+          20: "양식",
+          30: "중식",
+          40: "일식",
+          50: "디저트",
+          60: "음료"
+        };
+        return map[value] || value;
+      },
+
       fnFoodList() {
         let self = this;
         $.ajax({
@@ -335,7 +341,6 @@
       },
       fnEditMode(map) {
         let self = this;
-        console.log(map);
         self.info = map;
         self.name = map.FOOD_TYPE_NAME;
         self.descr = map.DESCRIPTION;
@@ -348,9 +353,15 @@
       }
     },
     mounted() {
+      const params = new URLSearchParams(window.location.search);
+      const category = params.get("category");
+      if (category) {
+        this.foodCategory = Number(category);
+      }
       this.fnFoodList();
     }
   });
 
   app.mount('#app');
 </script>
+</html>

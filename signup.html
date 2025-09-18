@@ -1,153 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+
+  <!-- jQuery & Vue -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- 🍊 스타일 -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffb347, #ffe259);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #app {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 420px;
+      border: 3px solid #ffecb3; /* 연노랑 테두리 */
+    }
+
+    h2 {
+      text-align: center;
+      color: #f57c00;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 14px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus {
+      border-color: #ffa726;
+      box-shadow: 0 0 8px rgba(255, 167, 38, 0.4);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #ff7043;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 5px 15px rgba(255, 112, 67, 0.3);
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #f4511e;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+  </style>
 </head>
 
 <body>
-    <div id="app">
-        
-        <div>
-            <label>
-                아이디 : <input type="text" placeholder="아이디" v-model ="userId">
-            </label>
-        </div>
-        <div>
-            <label>
-                비밀번호 : <input type="password" placeholder="비밀번호" v-model ="pwd">
-            </label>
-        </div>
-         <div>
-            <label>
-                이름 : <input type="text" placeholder="이름을 입력하시오" v-model ="name">
-            </label>
-        </div>
-         <div>
-            <label>
-                생년월일 : <input type="text" placeholder="8글자 입력 예>> 20041013" v-model ="birth">
-            </label>
-        </div>
-        <div>
-            <label>
-                닉네임 : <input type="text"  v-model ="nickname">
-            </label>
-        </div>
-        <div>
-            <label>
-                프로필네임 : <input type="text" placeholder="예 >> 강아지" v-model ="proname">
-            </label>
-        </div>
-        <div>
-            <label>
-                주소 : <input type="text"  v-model ="addr">
-            </label>
-        </div>
-        <div>
-            <label>
-                전화번호 : <input type="text" placeholder="예>> 010-1234-1234" v-model ="phoneNum">
-            </label>
-        </div>
-        <div>
-            <label>
-                이메일 : <input type="text" v-model ="email">
-            </label>
-        </div>
-        <div>
-            <label>
-                성별 : <input type="text" placeholder="M,F" v-model ="gender">
-            </label>
-        </div>
-        <div>
-            <label>
-                상태 : <input type="text" placeholder="C" v-model ="status">
-            </label>
-        </div>
-        <div>
-            <label>
-                가입날짜 : <input type="text" placeholder="8글자 입력 예>> 25/08/14" v-model ="cdate">
-            </label>
-        </div>
-        <div>
-            <label>
-                갱신날짜 : <input type="text" placeholder="8글자 입력 예>> 25/08/14" v-model ="update">
-            </label>
-        </div>
-        <div>
-            <button @click="fnJoin">회원가입</button>
-        </div>
-        </tr>
-    </div>
+  <div id="app">
+    <h2>회원가입</h2>
+
+    <label>아이디:
+      <input type="text" placeholder="아이디" v-model="userId">
+    </label>
+
+    <label>비밀번호:
+      <input type="password" placeholder="비밀번호" v-model="pwd">
+    </label>
+
+    <label>이름:
+      <input type="text" placeholder="이름을 입력하세요" v-model="name">
+    </label>
+
+    <label>생년월일:
+      <input type="text" placeholder="예: 20041013" v-model="birth">
+    </label>
+
+    <label>닉네임:
+      <input type="text" placeholder="닉네임" v-model="nickname">
+    </label>
+
+    <label>프로필네임:
+      <input type="text" placeholder="예: 강아지" v-model="proname">
+    </label>
+
+    <label>주소:
+      <input type="text" placeholder="주소" v-model="addr">
+    </label>
+
+    <label>전화번호:
+      <input type="text" placeholder="예: 010-1234-5678" v-model="phoneNum">
+    </label>
+
+    <label>이메일:
+      <input type="text" placeholder="example@email.com" v-model="email">
+    </label>
+
+    <label>성별:
+      <input type="text" placeholder="M / F" v-model="gender">
+    </label>
+
+    <label>상태:
+      <input type="text" placeholder="C" v-model="status">
+    </label>
+
+    <label>가입날짜:
+      <input type="text" placeholder="예: 25/08/14" v-model="cdate">
+    </label>
+
+    <label>갱신날짜:
+      <input type="text" placeholder="예: 25/08/14" v-model="update">
+    </label>
+
+    <button @click="fnJoin">회원가입</button>
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          userId: "",
+          pwd: "",
+          name: "",
+          birth: "",
+          nickname: "",
+          proname: "",
+          addr: "",
+          phoneNum: "",
+          email: "",
+          gender: "",
+          status: "",
+          cdate: "",
+          update: ""
+        };
+      },
+      methods: {
+        fnJoin() {
+          let self = this;
+          let param = {
+            userId: self.userId,
+            pwd: self.pwd,
+            name: self.name,
+            birth: self.birth,
+            nickname: self.nickname,
+            proname: self.proname,
+            addr: self.addr,
+            phoneNum: self.phoneNum,
+            email: self.email,
+            gender: self.gender,
+            status: self.status,
+            cdate: self.cdate,
+            update: self.update
+          };
+
+          $.ajax({
+            url: "http://localhost:3009/signup/add",
+            dataType: "json",
+            type: "GET",
+            data: param,
+            success: function (data) {
+              alert("등록되었습니다.");
+              location.href = "login.html";
+            },
+            error: function () {
+              alert("회원가입 실패. 서버에 문제가 있습니다.");
+            }
+          });
+        }
+      }
+    });
+
+    app.mount("#app");
+  </script>
 </body>
 
 </html>
-
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                // 변수 - (key : value)
-                
-                userId : "",
-                pwd : "",
-                name: "",
-                birth : "",
-                nickname: "",
-                proname : "",
-                addr : "",
-                phoneNum : "",
-                email : "",
-                gender : "",
-                status : "",
-                cdate : "",
-                update :""
-
-            };
-        },
-        methods: {
-            // 함수(메소드) - (key : function())
-            fnJoin: function () {
-                let self = this;
-                let param = {
-                    
-                    userId : self.userId,
-                    pwd : self.pwd,
-                    name : self.name,
-                    birth : self.birth,
-                    nickname : self.nickname,
-                    proname : self.proname,
-                    addr : self.addr,
-                    phoneNum : self.phoneNum,
-                    email : self.email,
-                    gender : self.gender,
-                    status : self.status,
-                    cdate : self.cdate,
-                    update : self.update
-                }
-                
-                $.ajax({
-                    url: "http://localhost:3009/signup/add",
-                    dataType: "json",
-                    type: "GET",
-                    data : param,
-                    success: function (data) {
-                        alert("등록되었습니다.");
-                        location.href = "login.html"
-
-                    }
-                });
-            },
-           
-        }, // methods
-        mounted() {
-            // 처음 시작할 때 실행되는 부분
-        }
-    });
-
-    app.mount('#app');
-</script>

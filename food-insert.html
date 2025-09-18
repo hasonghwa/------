@@ -1,133 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>음식 추가</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    /* 🍊 배경 & 폰트 */
+    body {
+      background: linear-gradient(135deg, #ffb347, #ffe259);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #app {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #f57c00;
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #ff9800;
+      box-shadow: 0 0 6px rgba(255, 152, 0, 0.4);
+      outline: none;
+    }
+
+    button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      background-color: #ffa726;
+      color: white;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #f57c00;
+      box-shadow: 0 6px 14px rgba(245, 124, 0, 0.5);
+    }
+
+    .check-success {
+      border-color: #4caf50;
+      box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="app">
-        <h2>음식추가</h2>
-        <div>
-            이름 :
-            <template v-if="checkFlg">
-                <input v-model="name">
-            </template>
-            <template v-else>
-                <input v-model="name">
-            </template>
+  <div id="app">
+    <h2>음식 추가</h2>
 
-            <button @click="fnCheck">중복체크</button>
-        </div>
-
-       종류 : <select v-model="descr">
-        <option>한식</option>
-        <option>양식</option>
-        <option>중식</option>
-        <option>일식</option>
-        <option>디저트</option>
-       <option>음료</option>
-        </select>
-        
-        <div>
-            # : <input v-model="mood">
-
-        </div>
-
-
-        <div>추천 : <input v-model="reco"></div>
-        <div>
-            <button @click="fnAdd">추가</button>
-            <button @click="fnBack">되돌아가기</button>
-        </div>
+    <div>
+      <label>이름</label>
+      <input v-model="name" :class="{'check-success': checkFlg}" placeholder="예: 제육볶음" />
+      <button @click="fnCheck">중복 체크</button>
     </div>
-</body>
 
-</html>
+    <div>
+      <label>종류</label>
+      <select v-model="descr">
+  <option disabled value="">-- 종류 선택 --</option>
+  <option value="10">한식</option>
+  <option value="20">양식</option>
+  <option value="30">중식</option>
+  <option value="40">일식</option>
+  <option value="50">디저트</option>
+  <option value="60">음료</option>
+</select>
+    </div>
 
-<script>
+    <div>
+      <label>#</label>
+      <input v-model="mood" placeholder="예: 든든한 / 간단한 등" />
+    </div>
+
+    <div>
+      <label>추천 설명</label>
+      <input v-model="reco" placeholder="예: 스트레스 받을 때 추천!" />
+    </div>
+
+    <div class="button-group">
+      <button @click="fnAdd">추가</button>
+      <button @click="fnBack" style="background-color: #9e9e9e;">되돌아가기</button>
+    </div>
+  </div>
+
+  <script>
     const app = Vue.createApp({
-        data() {
-            return {
-                // 변수 - (key : value)
+     fnInsert() {
+        const categoryMap = {
+          "한식": 10,
+          "양식": 20,
+          "중식": 30,
+          "일식": 40,
+          "디저트": 50,
+          "음료": 60
+        };
 
-                name: "",
-                descr: "",
-                mood: "",
-                reco: "",
-                checkFlg: false
-            };
-        },
-        methods: {
-            // 함수(메소드) - (key : function())
-            fnAdd: function () {
-                let self = this;
-                if (!self.checkFlg) {
-                    alert("중복체크 확인 후 추가해주세요.");
-                    return;
-                }
+        const descrCode = categoryMap[this.descr];
 
-                $.ajax({
-                    url: "http://localhost:3009/food/insert",
-                    dataType: "json",
-                    type: "GET",
-                    data: {
-                        name: self.name,
-                        descr: self.descr,
-                        mood: self.mood,
-                        reco: self.reco
-                    },
-                    success: function (data) {
-                        if (data.success) {
-                            alert(`추가되었습니다!`);
-                            self.fnBack(); // 돌아가기
-                        } else {
-                            alert("추가 실패: " + data.message);
-                        }
-                    },
-                    error: function () {
-                        alert("서버와의 통신에 실패했습니다.");
-                    }
-                });
-            },
-
-            fnBack: function () {
-                location.href = "food-list.html";
-            },
-
-
-
-
-            fnCheck: function () {
-                let self = this;
-
-                $.ajax({
-                    url: "http://localhost:3009/food/search",
-                    dataType: "json",
-                    type: "GET",
-                    data: { name: self.name },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.length == 0) {
-                            alert("중복되지 않습니다.");
-                            self.checkFlg = true;
-                        } else {
-                            alert("이미 있는 음식입니다.");
-                        }
-                    }
-                });
-            }
-
-        }, // methods
-        mounted() {
-            // 처음 시작할 때 실행되는 부분
+        if (!descrCode) {
+          alert("올바른 음식 종류를 선택해주세요.");
+          return;
         }
+
+        $.ajax({
+          url: "http://localhost:3009/food/insert",
+          dataType: "json",
+          type: "GET",
+          data: {
+            name: this.name,
+            descr: descrCode,  // ← 여기 중요!
+            mood: this.mood,
+            reco: this.reco
+          },
+          success(data) {
+            alert("추가되었습니다!");
+
+            // ✅ 현재 카테고리 선택 상태로 돌아가게 하기
+            location.href = `food-list.html?category=${descrCode}`;
+          },
+          error(err) {
+            alert("추가 실패");
+            console.error(err);
+          }
+        });
+      },
+     
+     
+     
+        data() {
+        return {
+          name: '',
+          descr: '',
+          mood: '',
+          reco: '',
+          checkFlg: false
+        };
+      },
+      methods: {
+        fnAdd() {
+          let self = this;
+          if (!self.checkFlg) {
+            alert("⚠️ 중복 체크를 먼저 해주세요.");
+            return;
+          }
+
+          if (!self.name || !self.descr || !self.mood || !self.reco) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+          }
+
+          $.ajax({
+            url: "http://localhost:3009/food/insert",
+            dataType: "json",
+            type: "GET",
+            data: {
+              name: self.name,
+              descr: self.descr,
+              mood: self.mood,
+              reco: self.reco
+            },
+            success(data) {
+              if (data.success) {
+                alert("✅ 음식이 추가되었습니다!");
+                self.fnBack();
+              } else {
+                alert("❌ 추가 실패: " + data.message);
+              }
+            },
+            error() {
+              alert("서버 통신 실패");
+            }
+          });
+        },
+
+        fnBack() {
+          location.href = "food-list.html";
+        },
+
+        fnCheck() {
+          let self = this;
+          if (!self.name) {
+            alert("이름을 먼저 입력해주세요.");
+            return;
+          }
+
+          $.ajax({
+            url: "http://localhost:3009/food/search",
+            dataType: "json",
+            type: "GET",
+            data: { name: self.name },
+            success(data) {
+              if (data.length === 0) {
+                alert("✅ 중복되지 않은 이름입니다.");
+                self.checkFlg = true;
+              } else {
+                alert("❌ 이미 존재하는 음식입니다.");
+                self.checkFlg = false;
+              }
+            },
+            error() {
+              alert("중복 체크 실패");
+            }
+          });
+        }
+      }
     });
 
     app.mount('#app');
-</script>
+  </script>
+</body>
+
+</html>

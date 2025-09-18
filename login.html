@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>로그인 페이지</title>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.js" 
-          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <style>
-    /* 전체 배경과 중앙 정렬 */
+    /* 🍊 배경 스타일 */
     body {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #ffb347, #ffe259); /* 오렌지 → 연노랑 */
       height: 100vh;
       margin: 0;
       display: flex;
@@ -23,17 +23,17 @@
       color: #333;
     }
 
-    /* 로그인 박스 스타일 */
+    /* 🍽️ 로그인 박스 스타일 */
     #app {
       background-color: white;
       padding: 40px 50px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      width: 320px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 340px;
       box-sizing: border-box;
+      border: 2px solid #fdd835; /* 노란 테두리 */
     }
 
-    /* 입력 라벨과 입력창 배치 */
     #container > div {
       margin-bottom: 20px;
     }
@@ -43,7 +43,7 @@
       flex-direction: column;
       font-weight: 600;
       font-size: 14px;
-      color: #555;
+      color: #444;
     }
 
     input[type="text"],
@@ -51,7 +51,7 @@
       margin-top: 8px;
       padding: 12px 15px;
       font-size: 16px;
-      border: 1.8px solid #ccc;
+      border: 2px solid #ddd;
       border-radius: 8px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
       outline: none;
@@ -59,38 +59,37 @@
 
     input[type="text"]:focus,
     input[type="password"]:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+      border-color: #ffa726;
+      box-shadow: 0 0 8px rgba(255, 167, 38, 0.5);
     }
 
-    /* 버튼 컨테이너 */
+    /* 🍊 버튼 컨테이너 */
     #app > div:nth-child(2) {
       display: flex;
       justify-content: space-between;
-      gap: 15px;
+      gap: 12px;
     }
 
     button {
       flex: 1;
       padding: 12px 0;
       border: none;
-      border-radius: 8px;
-      background: #667eea;
+      border-radius: 10px;
+      background: #ff7043; /* 연주황 */
       color: white;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      transition: background-color 0.3s ease, transform 0.15s ease;
+      box-shadow: 0 4px 12px rgba(255, 112, 67, 0.3);
     }
 
     button:hover {
-      background-color: #556cd6;
+      background-color: #f4511e; /* 진한 주황 */
     }
 
     button:active {
-      background-color: #455bb5;
-      box-shadow: none;
+      transform: scale(0.98);
     }
   </style>
 </head>
