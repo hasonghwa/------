@@ -16,178 +16,71 @@ v-model = foodCategory 만든 후 알아서 하기
 food-random.html 에서 출력이 되게 만들기
 
 <보완점>
-1.포스트에서 음식종류 추가하면 음식이름을 눌렀을 때 내가 추가한 종류 보이게
+1.포스트에서 음식종류 추가한 다음 option->예)양식 을 눌렀을 때 내가 추가한 종류 보이게
 2.랜덤뽑기에서 처음에는 리스트가 안보였다가 누르면 보이게하기(완)
 3.회원가입 만들기(미완)
-4.랜덤뽑기에서 내가 추가한 음식 보이게 하기
-5.음식종류 추가할때 원래 번호로 보이게 하기
+4.랜덤뽑기에서 내가 추가한 음식 보이게 하기(완)
+5.음식종류 추가할때 원래 번호로 보이게 하기(완)
+6.랜덤뽑기에서 option에 따라 음식이 나오게
 
 
 
-2. 고치기 전 코드
-<!DOCTYPE html>
-<html lang="en">
+2. flg 함수를 써서 코드를 수정함
+food-random에서 수정
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>랜덤 음식 선택기</title>
 
-  <!-- jQuery & Vue -->
-  <script src="https://code.jquery.com/jquery-3.7.1.js"
-    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-  <style>
-    body {
-      background-color: #f9fafb;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      color: #222;
-    }
+4. server /food/random에서 코드를 고침 
 
-    #app {
-      width: 480px;
-      background: white;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
+(구)
+const randomId = Math.floor(Math.random() * 80) + 1;
 
-    h3 {
-      font-weight: 700;
-      font-size: 1.6rem;
-      margin-bottom: 40px;
-      color: #444;
-    }
+// 그 ID에 해당하는 음식 1개만 조회
+SELECT * FROM FOOD_TYPES WHERE FOOD_TYPE_ID = :id
 
-    .box {
-      background-color: #b700ff;
-      color: white;
-      font-weight: 700;
-      font-size: 1.2rem;
-      padding: 18px 0;
-      width: 160px;
-      margin: 0 auto 40px;
-      border-radius: 12px;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease, transform 0.15s ease;
-      box-shadow: 0 6px 12px rgba(117, 57, 255, 0.4);
-    }
+(현재)
+SELECT * FROM (
+    SELECT * FROM FOOD_TYPES ORDER BY   DBMS_RANDOM.VALUE(=랜덤숫자 생성 함수 
+    {범위 상관없이 모든 음식에서 랜덤선택})
+  ) WHERE ROWNUM = 1(=맨 위에 있는 행 딱 하나만 가져옴 ==>랜덤한 음식 1개 선택)
+    WHERE ROWNUM <=3(이렇게 하면 랜덤 3개 가져옴)
 
-    .box:hover {
-      background-color: #b700ff;
-      transform: scale(1.05);
-    }
+5.
+(추가)  {server(Node.js= 백엔드)수정}
+  /food/insert 에서 수정
 
-    .box:active {
-      transform: scale(0.97);
-    }
+ // 재사용 가능한 가장 작은 번호 찾기
+    const idResult = await connection.execute(`
+      SELECT MIN(missing_id) AS NEW_ID (==>최종적으로 가장 작은 번호를 선택해서 재사용하도록 함)
+      FROM (
+        SELECT LEVEL AS missing_id
+        FROM dual(=dual 오직 1개의 행 1개의 열만 가짐 =>테스트 & 단순 값을 가져올 때 주로 쓰임)
+        CONNECT BY LEVEL <= (SELECT NVL(MAX(FOOD_TYPE_ID), 0) + 1 FROM FOOD_TYPES) 
+        (==>예)테이블 번호가 1,2,4,5라고 가정했을때 MAX(FOOD_TYPE_ID)=5 여기에 +1이 붙어있기 때문에 최종적으로 6까지의 번호가 생성됨 )
+        MINUS(==>차집합 이미 존재하는 id를 뺌)
+        SELECT FOOD_TYPE_ID FROM FOOD_TYPES
+      )
+    `);
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 1rem;
-      color: #333;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgb(0 0 0 / 0.05);
-    }
+    const newId = idResult.rows[0][0];  // ex: 3
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 14px 12px;
-      text-align: center;
-    }
 
-    th {
-      background-color: #bf50ff;
-      color: white;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
 
-    tbody tr:nth-child(odd) {
-      background-color: #f7fdfa;
-    }
-
-    tbody tr:hover {
-      background-color: #e2f0d9;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app">
-    <h3>Click을 누르면 무작위 음식 메뉴가 나옵니다</h3>
-
-    <div id="click">
-        
-      <div class="box" @click="fnRandom">Click!</div>
-    </div>
-
-    <table v-if="list.length > 0" aria-label="랜덤 음식 목록">
-      <thead>
-        <tr>
-          <th>이름</th>
-          <th>종류</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in list" :key="item.FOOD_TYPE_ID">
-          <td>{{ item.FOOD_TYPE_NAME }}</td>
-          <td>{{ item.DESCRIPTION }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p v-else style="color: #666; margin-top: 20px; font-style: italic;">
-      표시할 음식이 없습니다.
-    </p>
-  </div>
-
-  <script>
-    const app = Vue.createApp({
-      data() {
-        return {
-          list: [] // 서버에서 받아올 음식 정보 리스트
-        };
-      },
-      methods: {
-        fnRandom() {
-          let self = this;
-          $.ajax({
-            url: "http://localhost:3009/food/random",
-            type: "GET",
-            dataType: "json",
-            success(data) {
-              // 서버에서 배열로 받아온다고 가정
-              self.list = data;
-            },
-            error(err) {
-              console.error("랜덤 음식 가져오기 실패:", err);
-              alert("서버와의 통신에 실패했습니다.");
-            }
-          });
-        }
-      },
-      mounted() {
-        // 페이지 로드 시 자동 실행
-        this.fnRandom();
+    // 프론트로 새 ID 전송
+    res.json({ success: true, id: newId });
+  
+  (추가) {프론트(클라이언트 = Vue)수정}
+  //food-insert 에서 수정
+  success: function (data) {
+      if (data.success) {
+        alert(`추가되었습니다! 음식 번호는 ${data.id}번입니다.`);
+        self.fnBack(); // 돌아가기
+      } else {
+        alert("추가 실패: " + data.message);
       }
-    });
-
-    app.mount('#app');
-  </script>
-</body>
-
-</html>
+    },
+    error: function () {
+      alert("서버와의 통신에 실패했습니다.");
+    }
+  });
+}

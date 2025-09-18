@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
+
 <body>
     <div id="app">
         <h2>음식추가</h2>
         <div>
-            이름 : 
+            이름 :
             <template v-if="checkFlg">
                 <input v-model="name">
             </template>
             <template v-else>
                 <input v-model="name">
             </template>
-            
+
             <button @click="fnCheck">중복체크</button>
         </div>
-       
-       <div>종류 : <input v-model="descr"></div>
-       
+
+       종류 : <select v-model="descr">
+        <option>한식</option>
+        <option>양식</option>
+        <option>중식</option>
+        <option>일식</option>
+        <option>디저트</option>
+       <option>음료</option>
+        </select>
         
         <div>
             # : <input v-model="mood">
-       
-    </div>
+
+        </div>
 
 
         <div>추천 : <input v-model="reco"></div>
@@ -38,6 +47,7 @@
         </div>
     </div>
 </body>
+
 </html>
 
 <script>
@@ -45,58 +55,65 @@
         data() {
             return {
                 // 변수 - (key : value)
-                
-                name : "",
-                descr : "",
-                mood : "",
-                reco : "",
-                checkFlg : false
+
+                name: "",
+                descr: "",
+                mood: "",
+                reco: "",
+                checkFlg: false
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnAdd: function () {
                 let self = this;
-                if(!self.checkFlg){
+                if (!self.checkFlg) {
                     alert("중복체크 확인 후 추가해주세요.");
                     return;
                 }
-                
 
                 $.ajax({
                     url: "http://localhost:3009/food/insert",
                     dataType: "json",
                     type: "GET",
                     data: {
-                        name : self.name, 
-                        descr : self.descr,
-                        mood : self.mood,
-                        reco : self.reco
+                        name: self.name,
+                        descr: self.descr,
+                        mood: self.mood,
+                        reco: self.reco
                     },
                     success: function (data) {
-                        alert("추가되었습니다.");
-                        self.fnBack();
+                        if (data.success) {
+                            alert(`추가되었습니다!`);
+                            self.fnBack(); // 돌아가기
+                        } else {
+                            alert("추가 실패: " + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("서버와의 통신에 실패했습니다.");
                     }
                 });
             },
-            fnBack : function(){
-                location.href="food-list.html";
+
+            fnBack: function () {
+                location.href = "food-list.html";
             },
 
 
 
 
-            fnCheck : function(){
+            fnCheck: function () {
                 let self = this;
-                
+
                 $.ajax({
-                    url : "http://localhost:3009/food/search", 
-                    dataType : "json",
-                    type : "GET",
-                    data : {name : self.name},
-                    success : function(data){
-                        console.log(data);  
-                        if(data.length == 0){
+                    url: "http://localhost:3009/food/search",
+                    dataType: "json",
+                    type: "GET",
+                    data: { name: self.name },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.length == 0) {
                             alert("중복되지 않습니다.");
                             self.checkFlg = true;
                         } else {
@@ -105,7 +122,7 @@
                     }
                 });
             }
-        
+
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
