@@ -94,7 +94,7 @@
     <h2>회원가입</h2>
 
     <label>아이디:
-      <input type="text" placeholder="아이디" v-model="userId">
+      <input type="text" placeholder="아이디" v-model="Id">
     </label>
 
     <label>비밀번호:
@@ -105,46 +105,7 @@
       <input type="text" placeholder="이름을 입력하세요" v-model="name">
     </label>
 
-    <label>생년월일:
-      <input type="text" placeholder="예: 20041013" v-model="birth">
-    </label>
-
-    <label>닉네임:
-      <input type="text" placeholder="닉네임" v-model="nickname">
-    </label>
-
-    <label>프로필네임:
-      <input type="text" placeholder="예: 강아지" v-model="proname">
-    </label>
-
-    <label>주소:
-      <input type="text" placeholder="주소" v-model="addr">
-    </label>
-
-    <label>전화번호:
-      <input type="text" placeholder="예: 010-1234-5678" v-model="phoneNum">
-    </label>
-
-    <label>이메일:
-      <input type="text" placeholder="example@email.com" v-model="email">
-    </label>
-
-    <label>성별:
-      <input type="text" placeholder="M / F" v-model="gender">
-    </label>
-
-    <label>상태:
-      <input type="text" placeholder="C" v-model="status">
-    </label>
-
-    <label>가입날짜:
-      <input type="text" placeholder="예: 25/08/14" v-model="cdate">
-    </label>
-
-    <label>갱신날짜:
-      <input type="text" placeholder="예: 25/08/14" v-model="update">
-    </label>
-
+    
     <button @click="fnJoin">회원가입</button>
   </div>
 
@@ -152,47 +113,29 @@
     const app = Vue.createApp({
       data() {
         return {
-          userId: "",
+          Id: "",
           pwd: "",
           name: "",
-          birth: "",
-          nickname: "",
-          proname: "",
-          addr: "",
-          phoneNum: "",
-          email: "",
-          gender: "",
-          status: "",
-          cdate: "",
-          update: ""
+         
         };
       },
       methods: {
         fnJoin() {
           let self = this;
           let param = {
-            userId: self.userId,
+            Id: self.Id,
             pwd: self.pwd,
             name: self.name,
-            birth: self.birth,
-            nickname: self.nickname,
-            proname: self.proname,
-            addr: self.addr,
-            phoneNum: self.phoneNum,
-            email: self.email,
-            gender: self.gender,
-            status: self.status,
-            cdate: self.cdate,
-            update: self.update
+            
           };
 
           $.ajax({
-            url: "http://localhost:3009/signup/add",
+            url: "http://localhost:3009/members/insert",
             dataType: "json",
             type: "GET",
             data: param,
             success: function (data) {
-              alert("등록되었습니다.");
+              alert("가입완료.");
               location.href = "login.html";
             },
             error: function () {

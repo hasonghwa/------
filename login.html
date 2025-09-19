@@ -99,7 +99,7 @@
     <div id="container">
       <div>
         <label>아이디 :
-          <input type="text" v-model="userId" placeholder="아이디를 입력하세요" />
+          <input type="text" v-model="Id" placeholder="아이디를 입력하세요" />
         </label>
       </div>
       <div>
@@ -118,7 +118,7 @@
     const app = Vue.createApp({
       data() {
         return {
-          userId: "",
+          Id: "",
           pwd: ""
         };
       },
@@ -126,7 +126,7 @@
         fnLogin() {
           let self = this;
           let param = {
-            userId: self.userId,
+            Id: self.Id,
             pwd: self.pwd
           };
           $.ajax({
@@ -138,8 +138,8 @@
               console.log(data);
               if (data.length > 0) {
                 alert(data[0].NAME + "님 환영합니다");
-                sessionStorage.setItem("sessionId", data[0].USERID);
-                sessionStorage.setItem("sessionStatus", data[0].STATUS);
+                sessionStorage.setItem("sessionId", data[0].ID);
+               
 
                 location.href = "food-main.html";
               } else {

@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>음식 추가</title>
-  <script src="https://code.jquery.com/jquery-3.7.1.js"
-    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <style>
@@ -109,14 +109,14 @@
     <div>
       <label>종류</label>
       <select v-model="descr">
-  <option disabled value="">-- 종류 선택 --</option>
-  <option value="10">한식</option>
-  <option value="20">양식</option>
-  <option value="30">중식</option>
-  <option value="40">일식</option>
-  <option value="50">디저트</option>
-  <option value="60">음료</option>
-</select>
+        <option disabled value="">-- 종류 선택 --</option>
+        <option value="10">한식</option>
+        <option value="20">양식</option>
+        <option value="30">중식</option>
+        <option value="40">일식</option>
+        <option value="50">디저트</option>
+        <option value="60">음료</option>
+      </select>
     </div>
 
     <div>
@@ -137,7 +137,7 @@
 
   <script>
     const app = Vue.createApp({
-     fnInsert() {
+      fnInsert() {
         const categoryMap = {
           "한식": 10,
           "양식": 20,
@@ -168,7 +168,7 @@
             alert("추가되었습니다!");
 
             // ✅ 현재 카테고리 선택 상태로 돌아가게 하기
-            location.href = `food-list.html?category=${descrCode}`;
+            location.href = `food-list.html`;
           },
           error(err) {
             alert("추가 실패");
@@ -176,10 +176,10 @@
           }
         });
       },
-     
-     
-     
-        data() {
+
+
+
+      data() {
         return {
           name: '',
           descr: '',
@@ -211,23 +211,30 @@
               mood: self.mood,
               reco: self.reco
             },
-            success(data) {
-              if (data.success) {
-                alert("✅ 음식이 추가되었습니다!");
-                self.fnBack();
-              } else {
-                alert("❌ 추가 실패: " + data.message);
-              }
-            },
-            error() {
-              alert("서버 통신 실패");
-            }
-          });
-        },
+           success(data) {
+      if (data.success) {
+        alert("✅ 음식이 추가되었습니다!");
+        // 숫자로 변환해서 보내기
+        const categoryCode = Number(self.descr);
+        location.href = `food-list.html?category=${categoryCode}`;
+      } else {
+        alert("❌ 추가 실패: " + data.message);
+      }
+    },
+    error() {
+      alert("서버 통신 실패");
+    }
+  });
+},
 
         fnBack() {
-          location.href = "food-list.html";
-        },
+          const categoryCode = Number(this.descr);
+  if (categoryCode) {
+    location.href = `food-list.html?category=${categoryCode}`;
+  } else {
+    location.href = "food-list.html";
+  }
+},
 
         fnCheck() {
           let self = this;

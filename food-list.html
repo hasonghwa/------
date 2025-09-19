@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>음식 목록 관리</title>
-  <script src="https://code.jquery.com/jquery-3.7.1.js"
-    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
     /* 🍊 전체 배경과 폰트 */
@@ -126,7 +126,7 @@
     }
 
     /* 수정폼 레이아웃 */
-    .edit-container > div {
+    .edit-container>div {
       margin-bottom: 12px;
       font-size: 16px;
     }
@@ -168,7 +168,8 @@
 
 <body>
   <div id="app" v-cloak>
-    <div>
+    
+    <div v-if="!editMode">
       <select v-model="foodCategory" @change="fnFoodList">
         <option :value="''">전체</option>
         <option :value="10">한식</option>
@@ -179,6 +180,8 @@
         <option :value="60">음료</option>
       </select>
     </div>
+  
+
 
     <div v-if="!editMode">
       <table>
@@ -222,9 +225,19 @@
         <label for="name">이름:</label>
         <input id="name" type="text" v-model="name" />
       </div>
+
+
       <div>
-        <label for="descr">종류 코드:</label>
-        <input id="descr" type="text" v-model="descr" />
+        <label for="descr">종류:</label>
+        <select id="descr" v-model="descr" style="max-height: 120px; overflow-y: auto;">
+          <option value="">-- 선택하세요 --</option>
+          <option value="10">한식</option>
+          <option value="20">양식</option>
+          <option value="30">중식</option>
+          <option value="40">일식</option>
+          <option value="50">디저트</option>
+          <option value="60">음료</option>
+        </select>
       </div>
       <div>
         <label for="mood">#:</label>
@@ -241,127 +254,128 @@
     </div>
   </div>
 
-<script>
-  const app = Vue.createApp({
-    data() {
-      return {
-        list: [],
-        info: {},
-        editMode: false,
-        name: '',
-        descr: '',
-        mood: '',
-        reco: '',
-        foodNo: "",
-        foodCategory: "",
-        FoodList: []
-      };
-    },
-    methods: {
-      mapCategory(value) {
-        const map = {
-          10: "한식",
-          20: "양식",
-          30: "중식",
-          40: "일식",
-          50: "디저트",
-          60: "음료"
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          list: [],
+          info: {},
+          editMode: false,
+          name: '',
+          descr: '',
+          mood: '',
+          reco: '',
+          foodNo: "",
+          foodCategory: "",
+          FoodList: []
         };
-        return map[value] || value;
       },
+      methods: {
+        mapCategory(value) {
+          const map = {
+            10: "한식",
+            20: "양식",
+            30: "중식",
+            40: "일식",
+            50: "디저트",
+            60: "음료"
+          };
+          return map[value] || value;
+        },
 
-      fnFoodList() {
-        let self = this;
-        $.ajax({
-          url: "http://localhost:3009/food/list",
-          dataType: "json",
-          type: "GET",
-          data: {
-            foodNo: self.foodNo,
-            foodCategory: self.foodCategory
-          },
-          success(data) {
-            console.log(data);
-            self.list = data.list;
-          },
-          error(err) {
-            console.error("데이터 로드 실패", err);
+        fnFoodList() {
+          let self = this;
+          $.ajax({
+            url: "http://localhost:3009/food/list",
+            dataType: "json",
+            type: "GET",
+            data: {
+              foodNo: self.foodNo,
+              foodCategory: self.foodCategory
+            },
+            success(data) {
+              console.log(data);
+              self.list = data.list;
+            },
+            error(err) {
+              console.error("데이터 로드 실패", err);
+            }
+          });
+        },
+        fnRemove(foodNumber) {
+          let self = this;
+          if (!confirm("정말 삭제하시겠습니까?")) {
+            return;
           }
-        });
-      },
-      fnRemove(foodNumber) {
-        let self = this;
-        if (!confirm("정말 삭제하시겠습니까?")) {
-          return;
+          $.ajax({
+            url: "http://localhost:3009/food/delete",
+            dataType: "json",
+            type: "GET",
+            data: {
+              foodId: foodNumber
+            },
+            success(data) {
+              alert("삭제되었습니다!");
+              self.fnFoodList();
+            },
+            error(err) {
+              alert("삭제 실패");
+              console.error(err);
+            }
+          });
+        },
+        fnEdit() {
+          let self = this;
+          if (!confirm("정말 수정하시겠습니까?")) {
+            return;
+          }
+          let param = {
+            name: self.name,
+            descr: self.descr,
+            foodNo: self.info.FOOD_TYPE_ID,
+            mood: self.mood,
+            reco: self.reco
+          };
+          $.ajax({
+            url: "http://localhost:3009/food/update",
+            dataType: "json",
+            type: "GET",
+            data: param,
+            success(data) {
+              alert("수정되었습니다!");
+              self.fnFoodList();
+              self.editMode = false;
+            },
+            error(err) {
+              alert("수정 실패");
+              console.error(err);
+            }
+          });
+        },
+        fnEditMode(map) {
+          let self = this;
+          self.info = map;
+          self.name = map.FOOD_TYPE_NAME;
+          self.descr = map.DESCRIPTION;
+          self.mood = map.RECOMMEND_MOOD;
+          self.reco = map.RECOMMEND_DESCRIPTION;
+          self.editMode = true;
+        },
+        fnAdd() {
+          location.href = "food-insert.html";
         }
-        $.ajax({
-          url: "http://localhost:3009/food/delete",
-          dataType: "json",
-          type: "GET",
-          data: {
-            foodId: foodNumber
-          },
-          success(data) {
-            alert("삭제되었습니다!");
-            self.fnFoodList();
-          },
-          error(err) {
-            alert("삭제 실패");
-            console.error(err);
-          }
-        });
       },
-      fnEdit() {
-        let self = this;
-        if (!confirm("정말 수정하시겠습니까?")) {
-          return;
+      mounted() {
+        const params = new URLSearchParams(window.location.search);
+        const category = params.get("category");
+        if (category) {
+          this.foodCategory = Number(category);
         }
-        let param = {
-          name: self.name,
-          descr: self.descr,
-          foodNo: self.info.FOOD_TYPE_ID,
-          mood: self.mood,
-          reco: self.reco
-        };
-        $.ajax({
-          url: "http://localhost:3009/food/update",
-          dataType: "json",
-          type: "GET",
-          data: param,
-          success(data) {
-            alert("수정되었습니다!");
-            self.fnFoodList();
-            self.editMode = false;
-          },
-          error(err) {
-            alert("수정 실패");
-            console.error(err);
-          }
-        });
-      },
-      fnEditMode(map) {
-        let self = this;
-        self.info = map;
-        self.name = map.FOOD_TYPE_NAME;
-        self.descr = map.DESCRIPTION;
-        self.mood = map.RECOMMEND_MOOD;
-        self.reco = map.RECOMMEND_DESCRIPTION;
-        self.editMode = true;
-      },
-      fnAdd() {
-        location.href = "food-insert.html";
+        this.fnFoodList();
       }
-    },
-    mounted() {
-      const params = new URLSearchParams(window.location.search);
-      const category = params.get("category");
-      if (category) {
-        this.foodCategory = Number(category);
-      }
-      this.fnFoodList();
-    }
-  });
+    });
 
-  app.mount('#app');
-</script>
+    app.mount('#app');
+  </script>
+
 </html>
