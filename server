@@ -1,0 +1,565 @@
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const oracledb = require('oracledb');
+
+const app = express();
+app.use(cors());
+
+// ejs 설정
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '.')); // .은 경로
+
+const config = {
+  user: 'SYSTEM',
+  password: 'test1234',
+  connectString: 'localhost:1521/xe'
+};
+
+// Oracle 데이터베이스와 연결을 유지하기 위한 전역 변수
+let connection;
+
+// 데이터베이스 연결 설정
+async function initializeDatabase() {
+  try {
+    connection = await oracledb.getConnection(config);
+    console.log('Successfully connected to Oracle database');
+  } catch (err) {
+    console.error('Error connecting to Oracle database', err);
+  }
+}
+
+initializeDatabase();
+
+// 엔드포인트
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
+app.get('/list', async (req, res) => {
+  const { } = req.query;
+  try {
+    const result = await connection.execute(`SELECT * FROM STUDENT`);
+    const columnNames = result.metaData.map(column => column.name);
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    res.json({
+        result : "success",
+        list : rows
+    });
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+
+
+app.get('/food/random', async (req, res) => {
+  try {
+
+    const result = await connection.execute(`
+      SELECT * FROM (
+        SELECT * FROM FOOD_TYPES ORDER BY DBMS_RANDOM.VALUE
+        ) WHERE ROWNUM = 1 
+    `);
+
+    const columnNames = result.metaData.map(column => column.name);
+    const rows = result.rows.map(row => {
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+
+    res.json(rows); // 바로 rows만 전달 (프론트가 self.list = data 기대 중)
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+app.get('/food/list', async (req, res) => {
+  const { foodCategory } = req.query;
+
+  try {
+    // 기본 쿼리
+    let sql = 'SELECT * FROM FOOD_TYPES';
+
+    
+    if (foodCategory) {
+      sql += ` WHERE TYPE = ${foodCategory}`;
+    }
+
+    const result = await connection.execute(sql); 
+    // JSON 변환
+    const columnNames = result.metaData.map(col => col.name);
+    const rows = result.rows.map(row => {
+      const obj = {};
+      columnNames.forEach((col, idx) => {
+        obj[col] = row[idx];
+      });
+      return obj;
+    });
+
+    res.json({
+      result: "success",
+      list: rows //list에 있기 때문에 food-list에서 list로 받아야함
+    }); 
+
+  } catch (error) {
+    console.error('쿼리 오류:', error);
+    res.status(500).send('쿼리 오류');
+  }
+});
+
+
+
+app.get('/search', async (req, res) => {
+  const { stuNo } = req.query;
+  try {
+    const result = await connection.execute(`SELECT * FROM STUDENT WHERE STU_NO = ${stuNo}`);
+    const columnNames = result.metaData.map(column => column.name);
+
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    res.json(rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+app.get('/food/search', async (req, res) => {
+  const { name } = req.query;
+  try {
+    const result = await connection.execute(`SELECT * FROM FOOD_TYPES WHERE FOOD_TYPE_NAME = '${name}'`); //문자열을 받을때 반드시 '${}'을 써야함
+    const columnNames = result.metaData.map(column => column.name);
+
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    res.json(rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+app.get('/insert', async (req, res) => {
+  const { stuNo, name, dept } = req.query;
+
+  try {
+    await connection.execute(
+      `INSERT INTO STUDENT (STU_NO, STU_NAME, STU_DEPT) VALUES (:stu_No, :name, :dept)`,
+      [stuNo, name, dept],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing insert', error);
+    res.status(500).send('Error executing insert');
+  }
+});
+
+app.get('/members/insert', async (req, res) => {
+  const { name, Id, pwd} = req.query;
+
+  try {
+    await connection.execute(
+      `INSERT INTO MEMBERS (ID, PASSWORD, NAME) 
+      VALUES (:Id, :pwd, :name)`,
+      [Id, pwd, name],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing insert', error);
+    res.status(500).send('Error executing insert');
+  }
+});
+
+app.get('/food/insert', async (req, res) => {
+  try {
+    const idResult = await connection.execute(`
+      SELECT MIN(missing_id) AS NEW_ID
+      FROM (
+        SELECT LEVEL AS missing_id
+        FROM dual
+        CONNECT BY LEVEL <= (SELECT NVL(MAX(FOOD_TYPE_ID), 0) + 1 FROM FOOD_TYPES)
+        MINUS
+        SELECT FOOD_TYPE_ID FROM FOOD_TYPES
+      )
+    `);
+
+    const newId = idResult.rows[0][0] || 1;
+    const descr = parseInt(req.query.descr, 10) || null;
+
+    await connection.execute(`
+      INSERT INTO FOOD_TYPES 
+      (FOOD_TYPE_ID, FOOD_TYPE_NAME, DESCRIPTION, RECOMMEND_MOOD, RECOMMEND_DESCRIPTION)
+      VALUES (:id, :name, :descr, :mood, :reco)
+    `, {
+      id: newId,
+      name: req.query.name,
+      descr: descr,
+      mood: req.query.mood,
+      reco: req.query.reco
+    }, { autoCommit: true });
+
+    res.json({ success: true, id: newId });
+  } catch (error) {
+    console.error('Insert Error:', error);
+    res.status(500).json({ success: false, message: 'Insert failed' });
+  }
+});
+
+
+
+
+app.get('/update', async (req, res) => {
+  const { stuNo, name, dept } = req.query;
+
+  try {
+    await connection.execute(
+      `UPDATE STUDENT SET STU_NAME = :name, STU_DEPT = :dept WHERE STU_NO = :stuNo`,
+      [name, dept, stuNo],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing update', error);
+    res.status(500).send('Error executing update');
+  }
+});
+
+app.get('/food/update', async (req, res) => {
+  const { foodNo, name, descr, mood, reco } = req.query;
+   
+
+  try {
+    await connection.execute(
+      `UPDATE FOOD_TYPES SET FOOD_TYPE_NAME = :name, DESCRIPTION = :descr, RECOMMEND_MOOD = :mood, RECOMMEND_DESCRIPTION = :reco WHERE FOOD_TYPE_ID = :foodNo`,
+      [name, descr, mood, reco, foodNo],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing update', error);
+    res.status(500).send('Error executing update');
+  }
+});
+
+
+app.get('/delete', async (req, res) => {
+  const {  stuNo } = req.query;
+
+  try {
+    await connection.execute(
+      `DELETE FROM STUDENT WHERE STU_NO = :stuNo`,
+      [stuNo],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing delete', error);
+    res.status(500).send('Error executing delete');
+  }
+});
+
+app.get('/food/delete', async (req, res) => {
+  const {  foodId } = req.query;
+  
+
+  try {
+    await connection.execute(
+      `DELETE FROM FOOD_TYPES WHERE FOOD_TYPE_ID = :foodId`,
+      [foodId],
+      
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing delete', error);
+    res.status(500).send('Error executing delete');
+  }
+});
+
+app.get('/emp/list', async (req, res) => { 
+  const { deptNo } = req.query;
+  let query = "";
+  if(deptNo != "" && deptNo != null){
+    query = `WHERE E.DEPTNO = ${deptNo} `
+  }
+  
+  try {
+    const result = await connection.execute(
+      `SELECT * FROM EMP E `
+      + `INNER JOIN DEPT D ON E.DEPTNO = D.DEPTNO `
+      + query
+      + `ORDER BY SAL DESC`
+    );
+    const columnNames = result.metaData.map(column => column.name);
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    // 리턴
+    res.json({
+        result : "success",
+        empList : rows
+    });
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+
+
+app.get('/board/list', async (req, res) => {
+  const {  } = req.query;
+  
+  try {
+    const result = await connection.execute(
+      `SELECT B.*, TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS CDATE FROM TBL_BOARD B`
+    );
+    const columnNames = result.metaData.map(column => column.name);
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    // 리턴
+    res.json({
+        result : "success",
+        boardList : rows
+    });
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+app.get('/board/add', async (req, res) => {
+  const { kind, title, contents, userId } = req.query;
+
+  try {
+    await connection.execute(
+      `INSERT INTO TBL_BOARD VALUES(B_SEQ.NEXTVAL, :title, :contents, :userId, 0, 0, :kind, SYSDATE, SYSDATE)`,
+      [title, contents, userId, kind],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing insert', error);
+    res.status(500).send('Error executing insert');
+  }
+});
+
+
+
+
+app.get('/board/view', async (req, res) => {
+  const { boardNo } = req.query;
+  
+  try {
+    const result = await connection.execute(
+      `SELECT B.*, TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS CDATE FROM TBL_BOARD B `
+      + `WHERE BOARDNO = ${boardNo}`
+    );
+    const columnNames = result.metaData.map(column => column.name);
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    // 리턴
+    res.json({
+        result : "success",
+        info : rows[0]
+    });
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+
+app.get('/board/delete', async (req, res) => {
+  const {  boardNo } = req.query;
+
+  try {
+    await connection.execute(
+      `DELETE FROM TBL_BOARD WHERE BOARDNO = :boardNo`,
+      [boardNo],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+  } catch (error) {
+    console.error('Error executing delete', error);
+    res.status(500).send('Error executing delete');
+  }
+});
+
+
+
+
+app.get('/board/insert', async (req, res) => {
+  const { title, userId, contents, kind } = req.query;
+  let query =`INSERT INTO TBL_BOARD `
+              +`VALUES(B_SEQ.NEXTVAL, '${title}', '${contents}', '${userId}' ,0 , 0, ${kind}, SYSDATE, SYSDATE)`;
+  console.log(query);
+  try {
+    await connection.execute(
+      query,
+      [],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+   } catch (error) {
+    console.error('Error executing delete', error);
+    res.status(500).send('Error executing delete');
+  }
+});
+
+
+app.get('/board/update', async (req, res) => {
+  const { title, userId, contents, kind, boardNo } = req.query;
+    let query =`UPDATE TBL_BOARD SET `
+              +`TITLE = '${title}', `
+              +`USERID = '${userId}', `
+              +`CONTENTS = '${contents}', `
+              +`KIND = ${kind} `
+              +`WHERE BOARDNO = ${boardNo}`;
+              console.log(query);
+   try {
+    await connection.execute(
+      query,
+      [],
+      { autoCommit: true }
+    );
+    res.json({
+        result : "success"
+    });
+   } catch (error) {
+    console.error('Error executing delete', error);
+    res.status(500).send('Error executing delete');
+  }
+});
+
+
+app.get('/login', async (req, res) => {
+  const { Id, pwd } = req.query;
+  let query = `SELECT * FROM MEMBERS WHERE ID = '${Id}' AND PASSWORD = '${pwd}'`
+  try {
+    const result = await connection.execute(query);
+    const columnNames = result.metaData.map(column => column.name);
+
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    res.json(rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+app.get('/user/info', async (req, res) => {
+  const { userId } = req.query;
+  let query = `SELECT * FROM TBL_USER WHERE USERID = '${userId}'`
+  try {
+    const result = await connection.execute(query);
+    const columnNames = result.metaData.map(column => column.name);
+
+    // 쿼리 결과를 JSON 형태로 변환
+    const rows = result.rows.map(row => {
+      // 각 행의 데이터를 컬럼명에 맞게 매핑하여 JSON 객체로 변환
+      const obj = {};
+      columnNames.forEach((columnName, index) => {
+        obj[columnName] = row[index];
+      });
+      return obj;
+    });
+    res.json(rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).send('Error executing query');
+  }
+});
+
+
+
+
+
+
+
+
+// 서버 시작
+app.listen(3009, () => {
+  console.log('Server is running on port 3009');
+});
