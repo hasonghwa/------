@@ -41,4 +41,4 @@
   <ul>● 자유롭게 수정/삭제 (이)가 가능합니다.</ul>
 
 ---
-![샘플](https://github.com/ljs1990-tj2/imageSample/blob/main/%EC%BA%A1%EC%B2%98.PNG)
+![이미지네임](https://github.com/ljs1990-tj2/imageSample/blob/main/yu.jpg)
