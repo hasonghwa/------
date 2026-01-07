@@ -41,16 +41,15 @@
   <ul>● 자유롭게 수정/삭제 (이)가 가능합니다.</ul>
 
 ---
-![이미지네임]([https://github.com/hasonghwa/------/blob/main/login.html)
+![이미지네임](https://github.com/hasonghwa/------/blob/main/insert.PNG)
 
 ---
-![이미지네임]([https://github.com/hasonghwa/------/blob/main/list.PNG)
+![이미지네임](https://github.com/hasonghwa/------/blob/main/list.PNG)
 ---
-![이미지네임]([https://github.com/hasonghwa/------/blob/main/main.PNG)
+![이미지네임](https://github.com/hasonghwa/------/blob/main/main.PNG)
 ---
-![이미지네임]([https://github.com/hasonghwa/------/blob/main/random.PNG
-)
+![이미지네임](https://github.com/hasonghwa/------/blob/main/random.PNG)
 ---
-
+![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
 
 
