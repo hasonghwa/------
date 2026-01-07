@@ -44,12 +44,19 @@
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/insert.PNG)
 
 ---
+
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/list.PNG)
+
 ---
+
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/main.PNG)
+
 ---
+
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/random.PNG)
+
 ---
+
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
 
 
