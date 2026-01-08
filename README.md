@@ -41,7 +41,7 @@
   <ul>● 자유롭게 수정/삭제 (이)가 가능합니다.</ul>
 
 ---
-<ul>○ 홈페이지에 로그인 합니다</ul>
+<ul>○ 홈페이지에 로그인 합니다.</ul>
 
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
 
@@ -52,11 +52,13 @@
 
 ---
 <ul>○ 사람들이 올린 음식 리스트를 확인할 수 있습니다.</ul>
+<ul>(전체, 한식, 중식, 일식, 양식, 디저트 중 1개 골라서 보기 가능)</ul>
 
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/list.PNG)
 
 ---
-<ul>○ 음식 종류를 선택해 음식을 등록 할 수 있습니다.</ul>
+<ul>○ 음식 종류( 예) 한식 )를 선택해 음식을 등록 할 수 있습니다.</ul>
+<ul>○ 태그와 설명을 붙일 수 있습니다. (선택 사항)</ul>
 
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/insert.PNG)
 
