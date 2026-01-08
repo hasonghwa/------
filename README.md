@@ -41,22 +41,23 @@
   <ul>● 자유롭게 수정/삭제 (이)가 가능합니다.</ul>
 
 ---
-![이미지네임](https://github.com/hasonghwa/------/blob/main/insert.PNG)
+<ul>○ 홈페이지에 로그인 합니다</ul>
+![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
 
 ---
-
-![이미지네임](https://github.com/hasonghwa/------/blob/main/list.PNG)
-
----
-
+<ul>○ 메인창에서 2가지 선택지중 하나를 고릅니다.</ul>
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/main.PNG)
 
 ---
-
-![이미지네임](https://github.com/hasonghwa/------/blob/main/random.PNG)
+<ul>○ 사람들이 올린 음식 리스트를 확인할 수 있습니다.</ul>
+![이미지네임](https://github.com/hasonghwa/------/blob/main/list.PNG)
 
 ---
+<ul>○ 음식 종류를 선택해 음식을 등록 할 수 있습니다.</ul>
+![이미지네임](https://github.com/hasonghwa/------/blob/main/insert.PNG)
 
-![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
+---
+<ul>○ 자신이 등록한 음식을 포함한 음식 리스트 중 한 개를 랜덤으로 추첨합니다.</ul>
+![이미지네임](https://github.com/hasonghwa/------/blob/main/random.PNG)
 
 
