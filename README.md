@@ -44,7 +44,7 @@
 
 <h3>👀 상세보기</h3>
 
----
+
 <ul>○ 홈페이지에 로그인 합니다.</ul>
 
 ![이미지네임](https://github.com/hasonghwa/------/blob/main/login.PNG)
